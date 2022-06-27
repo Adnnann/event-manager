@@ -1,13 +1,16 @@
 import { useSelector } from "react-redux";
 import { getLoggedUserData } from "../../features/eLearningSlice";
-import AddEvent from "../courses/AddEvent";
-import MentorCourses from "../courses/MentorCourses";
-import UserCourses from "../courses/UserCourses";
+import AddEvent from "../events/AddEvent";
+import Events from "../events/Events";
 
 const DashboardRightPanel = () => {
   const loggedUser = useSelector(getLoggedUserData);
 
-  return <>{window.location.pathname === "createEvent" && <AddEvent />}</>;
+  return (
+    <>
+      {window.location.pathname === "createEvent" ? <AddEvent /> : <Events />}
+    </>
+  );
 };
 
 export default DashboardRightPanel;

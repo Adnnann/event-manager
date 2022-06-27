@@ -6,6 +6,7 @@ import {
   cleanReloginStatus,
   cleanStore,
   fetchCourses,
+  fetchUserEvents,
   fetchUsers,
   getCourses,
   getLoggedUserData,
@@ -48,8 +49,9 @@ const useStyles = makeStyles((theme) => ({
   },
   buttons: {
     fontSize: "24px",
-    marginTop: "30px",
     textTransform: "none",
+    color: "black",
+    marginTop: "20px !important",
   },
   userInfo: {
     marginTop: "20px",
@@ -69,11 +71,16 @@ const DashboardLeftPanel = () => {
     navigate("/dashboard");
   };
 
-  const redirectToMyRegistrations = () => {};
+  const redirectToMyEvents = () => {
+    dispatch(fetchUserEvents(loggedUser.user._id));
+    navigate("/userEvents");
+  };
 
   const createEvent = () => {
     navigate("/createEvent");
   };
+
+  const redirectToMyRegisteredEvents = () => {};
 
   const signout = () => {
     dispatch(signoutUser());
@@ -85,10 +92,17 @@ const DashboardLeftPanel = () => {
     clickEvents: [
       redirectToDashboard,
       createEvent,
-      redirectToMyRegistrations,
+      redirectToMyEvents,
+      redirectToMyRegisteredEvents,
       signout,
     ],
-    buttons: ["Dashboard", "Create Event", "My Events", "Logout"],
+    buttons: [
+      "Dashboard",
+      "Create Event",
+      "My Events",
+      "My registrations",
+      "Logout",
+    ],
     icons: [faHouse, faChalkboardUser, faGear, faRightFromBracket],
   };
 
@@ -100,19 +114,6 @@ const DashboardLeftPanel = () => {
 
   return (
     <>
-      <FontAwesomeIcon
-        icon={faUser}
-        className={classes.userIcon}
-        color="primary"
-      />
-      <Typography className={classes.username}>
-        {loggedUser?.user
-          ? `${formatUserData(loggedUser.user.firstName)} ${formatUserData(
-              loggedUser.user.lastName
-            )}`
-          : null}
-      </Typography>
-
       <ButtonGroupWithIcons
         buttons={userButtonsAndIcons.buttons}
         clickEvents={userButtonsAndIcons.clickEvents}

@@ -12,6 +12,7 @@ import {
   getUserToken,
   userToken,
   createEvent,
+  fetchEvents,
 } from "../../features/eLearningSlice";
 import { Button, ButtonGroup, Card, CardMedia, Grid } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
@@ -98,6 +99,7 @@ const AddEvent = () => {
     }
 
     if (addEventStatus?.message) {
+      dispatch(fetchEvents());
       dispatch(cleanAddEventMessage());
       navigate("/dashboard");
     }

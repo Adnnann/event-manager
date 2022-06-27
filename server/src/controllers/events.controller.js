@@ -13,20 +13,23 @@ const createEvent = (req, res) => {
   });
 };
 const getEvents = (req, res) => {
-  // get id to enable filtering of data
-  const user = jwtDecode(req.cookies.userJwtToken);
+  Event.find({}).exec((err, events) => {
+    if (err) {
+      return res.send({ error: dbErrorHandlers.getErrorMessage(err) });
+    }
+    return res.send({ events });
+  });
+};
 
-  // filter data - get transactions for last three days
+const getUserEvents = (req, res) => {
+  console.log(req.body);
   Event.find({})
-    .where("userId")
-    .equals(userId)
-    // sort data in descending order
-    .sort({ created: -1 })
-    .exec((err, transactions) => {
+    .where({ createdBy: req.body.id })
+    .exec((err, events) => {
       if (err) {
         return res.send({ error: dbErrorHandlers.getErrorMessage(err) });
       }
-      res.send({ transactions });
+      return res.send({ events });
     });
 };
 
@@ -71,5 +74,6 @@ export default {
   updateEvent,
   removeEvent,
   getEvent,
+  getUserEvents,
   eventByID,
 };

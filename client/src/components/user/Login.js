@@ -8,6 +8,7 @@ import {
   setSignupUserForm,
   getLoggedUserData,
   cleanLoginMessage,
+  fetchEvents,
 } from "../../features/eLearningSlice";
 import {
   Card,
@@ -99,6 +100,7 @@ const Login = () => {
         name: loggedUser.user.name,
       };
       socket?.emit("newUser", user);
+      dispatch(fetchEvents());
       navigate("/dashboard");
     }
   }, [loggedUser]);

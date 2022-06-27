@@ -46,17 +46,24 @@ export const userToken = createAsyncThunk("users/protected", async () => {
     .then((response) => response.data)
     .catch((error) => error.message);
 });
+////////////////////////////////////////////
+export const fetchEvents = createAsyncThunk("eLearning/events", async () => {
+  return await axios
+    .get(`/api/events`)
+    .then((response) => response.data)
+    .catch((error) => error);
+});
 
-export const fetchUserData = createAsyncThunk(
-  "eLearning/loggedUser",
+export const fetchUserEvents = createAsyncThunk(
+  "eLearning/userEvents",
   async (id) => {
     return await axios
-      .get(`/api/users/${id}`)
+      .post(`/api/userEvents/`, { id: id })
       .then((response) => response.data)
       .catch((error) => error);
   }
 );
-
+//////////////////////////////////////////////
 export const reLoginUser = createAsyncThunk(
   "eLearning/loggedUser",
   async (id) => {
@@ -414,6 +421,9 @@ const initialState = {
   selectedFilterTerm: "",
   courseDeleteModal: false,
   store: {},
+  //EVENT
+  events: {},
+  userEvents: {},
 };
 
 const eLearningSlice = createSlice({
@@ -588,9 +598,7 @@ const eLearningSlice = createSlice({
     [userToken.fulfilled]: (state, { payload }) => {
       return { ...state, userToken: payload };
     },
-    [fetchUserData.fulfilled]: (state, { payload }) => {
-      return { ...state, loggedUser: payload };
-    },
+
     [updateUserData.fulfilled]: (state, { payload }) => {
       if (payload.error) {
         return {
@@ -621,12 +629,17 @@ const eLearningSlice = createSlice({
       return { ...state, updatedUserData: payload };
     },
     // Courses
-    [fetchUserCourses.fulfilled]: (state, { payload }) => {
-      return { ...state, userCourses: payload };
-    },
     [createEvent.fulfilled]: (state, { payload }) => {
       return { ...state, addEvent: payload };
     },
+    ///////////////
+    [fetchEvents.fulfilled]: (state, { payload }) => {
+      return { ...state, events: payload };
+    },
+    [fetchUserEvents.fulfilled]: (state, { payload }) => {
+      return { ...state, userEvents: payload };
+    },
+    ////////////
     [updateUser.fulfilled]: (state, { payload }) => {
       return { ...state, updatedUser: payload };
     },
@@ -708,8 +721,10 @@ export const getUserDataToDisplay = (state) =>
 export const getDeleteAccountModal = (state) =>
   state.eLearning.closeAccountModal;
 export const getUserToEdit = (state) => state.eLearning.userToEdit;
-///
-export const getUserCourses = (state) => state.eLearning.userCourses;
+////
+export const getEvents = (state) => state.eLearning.events;
+export const getUserEvents = (state) => state.eLearning.userEvents;
+/////
 export const getDashboardData = (state) => state.eLearning.dashboardData;
 export const getEventData = (state) => state.eLearning.addEvent;
 export const getFilter = (state) => state.eLearning.filterTerm;

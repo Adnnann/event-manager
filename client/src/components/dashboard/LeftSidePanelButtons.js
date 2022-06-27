@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "24px !important",
     marginTop: "30px",
     textTransform: "none !important",
+    color: "black",
   },
   userInfo: {
     marginTop: "20px",
@@ -26,7 +27,7 @@ const ButtonGroupWithIcons = ({ buttons, icons, clickEvents }) => {
   const classes = useStyles();
 
   return (
-    <ButtonGroup orientation="vertical">
+    <ButtonGroup orientation="vertical" style={{ marginTop: "20px" }}>
       {buttons.map((item, index) => {
         return (
           <Button
@@ -34,6 +35,7 @@ const ButtonGroupWithIcons = ({ buttons, icons, clickEvents }) => {
             onClick={clickEvents[index]}
             color="primary"
             className={classes.buttons}
+            style={{ color: "black" }}
             startIcon={
               <FontAwesomeIcon icon={icons[index]} className={classes.icons} />
             }

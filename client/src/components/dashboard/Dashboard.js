@@ -1,32 +1,20 @@
 import { useDispatch, useSelector } from "react-redux";
 import jwtDecode from "jwt-decode";
 import {
-  cleanReloginStatus,
-  fetchCourses,
-  fetchUserData,
-  fetchUsers,
   getCloseAccountFormStatus,
   getEditUserFormStatus,
   getEditUserPasswordFormStatus,
   getLoggedUserData,
-  getMentorCourses,
-  getSelectedFilterTerm,
   getUserToken,
-  reLoginUser,
-  setUserToken,
-  userToken,
 } from "../../features/eLearningSlice";
-import { Typography, useMediaQuery, Alert, Grid } from "@mui/material";
-import CloseAccountForm from "../user/DeleteAccountForm";
-import DeleteAccountModal from "../user/DeleteAccountModal";
-import EditUserDataButtons from "./DashboardButtons";
-import EditProfile from "../user/EditUserProfile";
+import { useMediaQuery, Grid } from "@mui/material";
+
 import DashboardLeftPanel from "./DashboardLeftPanel";
 import DashboardRightPanel from "./DashboardRightPanel";
-import EditUserPassword from "../user/EditUserPassword";
 import { makeStyles } from "@mui/styles";
 import { useEffect } from "react";
 import { io } from "socket.io-client";
+import Events from "../events/Events";
 
 const useStyles = makeStyles((theme) => ({
   largeScreens: {
@@ -70,8 +58,6 @@ const Dashboard = () => {
   const editUserProfile = useSelector(getEditUserFormStatus);
   const editUserPassword = useSelector(getEditUserPasswordFormStatus);
   const closeAccount = useSelector(getCloseAccountFormStatus);
-  const filterTerm = useSelector(getSelectedFilterTerm);
-  const mentorCourses = useSelector(getMentorCourses);
   const loggedUser = useSelector(getLoggedUserData);
   const token = useSelector(getUserToken);
 
@@ -83,7 +69,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     const socket = new io("http://localhost:5000");
-    socket.emit("getUserData", loggedUser.user._id);
+    loggedUser?.user && socket.emit("getUserData", loggedUser.user._id);
   }, []);
 
   return (
@@ -91,55 +77,9 @@ const Dashboard = () => {
       <Grid item xs={12} md={3} lg={3} xl={3}>
         <DashboardLeftPanel />
       </Grid>
-      <Grid item xs={12} md={6} lg={6} xl={6} className={classes.smallScreens}>
+      <Grid item xs={12} md={9} lg={9} xl={9}>
         <DashboardRightPanel />
       </Grid>
-
-      {!editUserProfile && !editUserPassword && !closeAccount ? (
-        <Grid
-          item
-          xs={12}
-          md={8}
-          lg={8}
-          xl={8}
-          className={classes.largeScreens}
-        >
-          {!iPadAirScreen && !iPadMiniScreen && !surfaceDuo ? (
-            <DashboardRightPanel />
-          ) : null}
-        </Grid>
-      ) : (
-        <>
-          <Grid
-            item
-            xs={12}
-            md={2}
-            lg={2}
-            xl={2}
-            className={classes.smallScreens}
-          >
-            <EditUserDataButtons />
-          </Grid>
-          <Grid item xs={12} md={6} lg={6} xl={6}>
-            {editUserProfile ? <EditProfile /> : null}
-            {editUserPassword ? <EditUserPassword /> : null}
-            {closeAccount ? <CloseAccountForm /> : null}
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            md={2}
-            lg={2}
-            xl={2}
-            className={classes.largeScreens}
-          >
-            {!iPadAirScreen && !iPadMiniScreen && !surfaceDuo ? (
-              <EditUserDataButtons />
-            ) : null}
-          </Grid>
-        </>
-      )}
-      <DeleteAccountModal />
     </Grid>
   );
 };

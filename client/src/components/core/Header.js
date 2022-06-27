@@ -16,6 +16,9 @@ const useStyles = makeStyles((theme) => ({
       marginBottom: "20px",
     },
   },
+  headerContainer: {
+    backgroundColor: theme.palette.primary.main,
+  },
 }));
 
 const Header = () => {

@@ -12,10 +12,7 @@ import {
   cleanUploadImageStatus,
   getLoggedUserData,
   fetchMentorCourses,
-  userToken,
   getUserToken,
-  reLoginUser,
-  setUserToken,
 } from "../../features/eLearningSlice";
 import {
   Button,
@@ -106,45 +103,7 @@ const EditCourse = () => {
   const token = useSelector(getUserToken);
   const classes = useStyles();
 
-  useEffect(() => {
-    if (Object.keys(loggedUser).length === 0) {
-      navigate("/dashboard");
-    }
-
-    if (updateCourseStatus?.message) {
-      if (loggedUser.user.role === "mentor") {
-        const courses = {
-          mentorId: loggedUser.user._id,
-          firstItem: 0,
-          lastItem: 12,
-          page: 1,
-        };
-        dispatch(cleanCourseUpdatedMessage());
-        dispatch(cleanUploadImageStatus());
-        dispatch(fetchMentorCourses(courses));
-        navigate("/dashboard");
-        return;
-      }
-
-      const course = {
-        filterTerm: "",
-        filterLevel: "",
-        filterDuration: "",
-        page: 1,
-        firstValue: 1,
-        lastValue: 12,
-      };
-
-      dispatch(fetchCourses(course));
-      dispatch(cleanCourseUpdatedMessage());
-      dispatch(cleanUploadImageStatus());
-      if (loggedUser.user.role !== "admin") {
-        navigate("/courses");
-      } else {
-        navigate("/admin/courses");
-      }
-    }
-  }, [updateCourseStatus]);
+  useEffect(() => {}, []);
 
   const { title, level, description, duration } = courseToEdit;
 

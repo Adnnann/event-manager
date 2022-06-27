@@ -1,9 +1,15 @@
 import express from "express";
 import eventCtrl from "../controllers/events.controller";
+import userCtrl from "../controllers/user.controller";
 
 const router = express.Router();
 
-router.route("/api/events").post(eventCtrl.createEvent).get(eventCtrl.getEvent);
+router
+  .route("/api/events")
+  .post(eventCtrl.createEvent)
+  .get(eventCtrl.getEvents);
+
+router.route("/api/userEvents/").post(eventCtrl.getUserEvents);
 
 router
   .route("/api/event/:eventId")
