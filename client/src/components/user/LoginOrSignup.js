@@ -6,13 +6,13 @@ import {
 import Login from "./Login";
 import Signup from "./Signup";
 
-const LoginOrSignup = () => {
+const LoginOrSignup = ({socket}) => {
   const displayLoginForm = useSelector(getSigninUserFormStatus);
   const displaySignupForm = useSelector(getSignupUserFormStatus);
 
   return (
     <>
-      {displayLoginForm ? <Login /> : null}
+      {displayLoginForm ? <Login socket={socket} /> : null}
 
       {displaySignupForm ? <Signup /> : null}
     </>

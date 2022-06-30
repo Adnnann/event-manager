@@ -21,7 +21,7 @@ import {
   Grid,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { io } from "socket.io-client";
+
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -69,12 +69,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Login = () => {
+const Login = ({socket}) => {
   const classes = useStyles();
   const loggedUser = useSelector(getLoggedUserData);
   const [username, setUsername] = useState("");
   const [user, setUser] = useState("");
-  const [socket, setSocket] = useState(null);
+
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -84,11 +84,10 @@ const Login = () => {
     password: "",
   });
 
-  useEffect(() => {
-    setSocket(io("http://localhost:5000"));
-  }, []);
+ 
 
   useEffect(() => {
+    console.log(socket)
     if (loggedUser?.token) {
       dispatch(userToken());
     }
@@ -103,12 +102,10 @@ const Login = () => {
       dispatch(fetchEvents());
       navigate("/dashboard");
     }
-  }, [loggedUser]);
+    console.log(socket)
+  }, [loggedUser, socket]);
 
-  useEffect(() => {
-    socket?.emit("newUser", user);
-    console.log(socket);
-  }, [socket, user]);
+
 
   const clickSubmit = () => {
     const user = {

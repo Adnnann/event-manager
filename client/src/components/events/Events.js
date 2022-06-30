@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
 import jwtDecode from "jwt-decode";
-import { fetchEvents, getEvents } from "../../features/eLearningSlice";
+import { fetchEvents, getEvents, getLoggedUserData } from "../../features/eLearningSlice";
 import { Grid, Card, CardMedia, CardContent } from "@mui/material";
 
 import { makeStyles } from "@mui/styles";
@@ -39,10 +39,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Events = () => {
+const Events = ({socket}) => {
+
+  const [data, setData] = useState([])
+
+  useEffect(()=>{
+    socket.on('getNotification',data=>{
+      setData(data)
+    })
+  },[socket,data])
+
+  console.log(data)
+
+  const loggedUser = useSelector(getLoggedUserData)
   const events = useSelector(getEvents);
   const dispatch = useDispatch();
   const classes = useStyles();
+
+  const register = (id) => {
+    console.log(id)
+    socket.emit('sendNotification',{
+      senderId: loggedUser.user._id,
+      receiverId: id
+    })
+  }
 
   return (
     <Grid container spacing={2} marginTop={2}>
@@ -84,7 +104,7 @@ const Events = () => {
                   <Typography component={"p"}>{item.description}</Typography>
                 </CardContent>
                 <CardActions style={{ justifyContent: "space-around" }}>
-                  <Button variant="contained" color="primary">
+                  <Button variant="contained" color="primary" onClick={()=>register(item.createdBy)}>
                     Register
                   </Button>
                   <Button variant="contained" color="secondary">

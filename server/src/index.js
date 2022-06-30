@@ -15,6 +15,7 @@ const io = new Server({
 const addNewUser = async (userData, socketId) => {
   const user = userData;
   const userSocketId = await socketId;
+  
 
   if (
     !onlineUsers.some((item) => item.id === user.id) &&
@@ -23,6 +24,7 @@ const addNewUser = async (userData, socketId) => {
     user["socketId"] = userSocketId;
     onlineUsers.push({ ...user });
   }
+
 };
 
 const removeUser = (socketId) => {
@@ -30,7 +32,8 @@ const removeUser = (socketId) => {
 };
 
 const getUser = (id) => {
-  return onlineUsers.find((user) => user.id === id);
+  return onlineUsers.filter((user) => user.id === id);
+ 
 };
 
 io.on("connection", (socket) => {
@@ -43,12 +46,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sendNotification", ({ senderId, receiverId }) => {
+    console.log(senderId)
     const receiver = getUser(receiverId);
-    io.to(receiver.socketId).emit("getNotification", {
-      senderName,
-    });
-  });
-
+    console.log(receiver[0].socketId)
+    io.to(receiver[0].socketId).emit("getNotification", {senderId});
+})
   socket.on("disconnect", () => {
     removeUser(socket.id);
   });

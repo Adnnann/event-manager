@@ -8,15 +8,15 @@ import LoginOrSignup from "./components/user/LoginOrSignup";
 import AddEvent from "./components/events/AddEvent";
 import UserEvents from "./components/events/UserEvents";
 
-function MainRouter() {
+function MainRouter({socket}) {
   const loggedUser = useSelector(getLoggedUserData);
   return (
     <Router>
       {loggedUser?.user ? <Header /> : null}
 
       <Routes>
-        <Route path="/" element={<LoginOrSignup />}></Route>
-        <Route path="/dashboard" element={<Dashboard />}></Route>
+        <Route path="/" element={<LoginOrSignup socket={socket}/>}></Route>
+        <Route path="/dashboard" element={<Dashboard socket={socket} />}></Route>
         <Route path="/createEvent" element={<AddEvent />}></Route>
         <Route path="/userEvents" element={<UserEvents />}></Route>
       </Routes>

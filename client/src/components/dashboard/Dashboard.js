@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Dashboard = () => {
+const Dashboard = ({socket}) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const editUserProfile = useSelector(getEditUserFormStatus);
@@ -65,11 +65,10 @@ const Dashboard = () => {
   const iPadMiniScreen = useMediaQuery("(width:768px)");
   const surfaceDuo = useMediaQuery("(width:912px)");
 
-  const socket = new io("http://localhost:5000");
+
 
   useEffect(() => {
-    const socket = new io("http://localhost:5000");
-    loggedUser?.user && socket.emit("getUserData", loggedUser.user._id);
+    loggedUser?.user && socket?.emit("getUserData", loggedUser.user._id);
   }, []);
 
   return (
@@ -78,7 +77,7 @@ const Dashboard = () => {
         <DashboardLeftPanel />
       </Grid>
       <Grid item xs={12} md={9} lg={9} xl={9}>
-        <DashboardRightPanel />
+        <DashboardRightPanel socket={socket} />
       </Grid>
     </Grid>
   );

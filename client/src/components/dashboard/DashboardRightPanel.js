@@ -3,12 +3,12 @@ import { getLoggedUserData } from "../../features/eLearningSlice";
 import AddEvent from "../events/AddEvent";
 import Events from "../events/Events";
 
-const DashboardRightPanel = () => {
+const DashboardRightPanel = ({socket}) => {
   const loggedUser = useSelector(getLoggedUserData);
 
   return (
     <>
-      {window.location.pathname === "createEvent" ? <AddEvent /> : <Events />}
+      {window.location.pathname === "createEvent" ? <AddEvent /> : <Events socket={socket} />}
     </>
   );
 };
