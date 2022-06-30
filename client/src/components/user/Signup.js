@@ -24,7 +24,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import TextFieldsGenerator from "../utils/TextFieldsGenerator";
-import { makeStyles } from "@mui/material";;
+import { makeStyles } from"@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   card: {

@@ -26,7 +26,7 @@ import {
 import TextFieldsGenerator from "../utils/TextFieldsGenerator";
 import SelectComponent from "../utils/SelectComponent";
 import ImagePlaceholder from "../../assets/imagePlaceholder.png";
-import { makeStyles } from "@mui/styles";
+import { makeStyles } from"@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   card: {
