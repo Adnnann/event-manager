@@ -46,10 +46,12 @@ const Events = ({socket}) => {
   useEffect(()=>{
     socket.on('getNotification',data=>{
       setData(data)
+
     })
+
   },[socket,data])
 
-  console.log(data)
+  
 
   const loggedUser = useSelector(getLoggedUserData)
   const events = useSelector(getEvents);
@@ -66,6 +68,7 @@ const Events = ({socket}) => {
 
   return (
     <Grid container spacing={2} marginTop={2}>
+     <h1> {data?.email ? `User ${data.email} would like to register for your event` : null}</h1>
       {Object.keys(events).length !== 0
         ? events.events.map((item) => {
             return (

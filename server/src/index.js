@@ -49,7 +49,10 @@ io.on("connection", (socket) => {
    
     const receiver = getUser(receiverId);
     const sender = getUser(senderId)
-    io.to(receiver[0].socketId).emit("getNotification", sender[0]);
+    if(receiver.length > 0){
+      io.to(receiver[0].socketId).emit("getNotification", sender[0]);
+    }
+    
 })
   socket.on("disconnect", () => {
     removeUser(socket.id);
