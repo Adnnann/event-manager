@@ -18,7 +18,7 @@ import { Button, ButtonGroup, Card, CardMedia, Grid } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
 import ImagePlaceholder from "../../assets/imagePlaceholder.png";
 import TextFieldsGenerator from "../utils/TextFieldsGenerator";
-import { makeStyles } from "@mui/styles";
+import { makeStyles } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
   card: {

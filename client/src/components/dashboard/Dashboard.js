@@ -11,7 +11,7 @@ import { useMediaQuery, Grid } from "@mui/material";
 
 import DashboardLeftPanel from "./DashboardLeftPanel";
 import DashboardRightPanel from "./DashboardRightPanel";
-import { makeStyles } from "@mui/styles";
+import { makeStyles } from "@mui/material";
 import { useEffect } from "react";
 import { io } from "socket.io-client";
 import Events from "../events/Events";

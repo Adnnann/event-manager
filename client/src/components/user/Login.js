@@ -20,7 +20,7 @@ import {
   Icon,
   Grid,
 } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { makeStyles } from"@mui/material";
 
 
 const useStyles = makeStyles((theme) => ({

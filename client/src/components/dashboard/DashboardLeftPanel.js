@@ -36,7 +36,7 @@ import {
   faCube,
 } from "@fortawesome/free-solid-svg-icons";
 import ButtonGroupWithIcons from "./LeftSidePanelButtons";
-import { makeStyles } from "@mui/styles";
+import { makeStyles } from "@mui/material";
 import { useEffect } from "react";
 
 const useStyles = makeStyles((theme) => ({

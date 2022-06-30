@@ -1,6 +1,6 @@
 import { Button, ButtonGroup } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { makeStyles } from "@mui/styles";
+import { makeStyles } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
   userIcon: {

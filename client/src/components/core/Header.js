@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, AppBar, Toolbar } from "@mui/material";
 import eventManagerAppLogo from "../../assets/eventManagerImg.jpeg";
-import { makeStyles } from "@mui/styles";
+import { makeStyles } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
   logo: {

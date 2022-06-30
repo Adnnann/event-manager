@@ -6,8 +6,8 @@ import jwtDecode from "jwt-decode";
 import { fetchEvents, getEvents, getLoggedUserData } from "../../features/eLearningSlice";
 import { Grid, Card, CardMedia, CardContent } from "@mui/material";
 
-import { makeStyles } from "@mui/styles";
-import { Button, CardActions, Typography } from "@material-ui/core";
+import { makeStyles } from "@mui/material";
+import { Button, CardActions, Typography } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
   card: {
