@@ -33,10 +33,11 @@ import {
   faGear,
   faRightFromBracket,
   faUserGroup,
+  faCalendarPlus,
   faCube,
 } from "@fortawesome/free-solid-svg-icons";
 import ButtonGroupWithIcons from "./LeftSidePanelButtons";
-import { makeStyles } from"@mui/styles";
+import { makeStyles } from "@mui/styles";
 import { useEffect } from "react";
 
 const useStyles = makeStyles((theme) => ({
@@ -103,7 +104,13 @@ const DashboardLeftPanel = () => {
       "My registrations",
       "Logout",
     ],
-    icons: [faHouse, faChalkboardUser, faGear, faRightFromBracket],
+    icons: [
+      faHouse,
+      faChalkboardUser,
+      faGear,
+      faCalendarPlus,
+      faRightFromBracket,
+    ],
   };
 
   const formatUserData = (str) => {

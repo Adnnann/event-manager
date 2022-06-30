@@ -9,7 +9,7 @@ import { io } from "socket.io-client";
 const App = () => {
   const [socket, setSocket] = useState(null);
   useEffect(() => {
-    setSocket(io("https://3000-adnnann-eventmanager-fncec49negf.ws-eu47.gitpod.io/"));
+    setSocket(io("http://localhost:5000"));
   }, []);
   return (
     <ThemeProvider theme={theme}>
