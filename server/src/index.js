@@ -46,10 +46,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sendNotification", ({ senderId, receiverId }) => {
-    console.log(senderId)
+   
     const receiver = getUser(receiverId);
-    console.log(receiver[0].socketId)
-    io.to(receiver[0].socketId).emit("getNotification", {senderId});
+    const sender = getUser(senderId)
+    io.to(receiver[0].socketId).emit("getNotification", sender[0]);
 })
   socket.on("disconnect", () => {
     removeUser(socket.id);
