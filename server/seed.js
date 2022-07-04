@@ -1,8 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 const mongoose = require("mongoose");
 const _ = require("lodash");
-const Courses = require("./src/models/events.model");
 const Users = require("./src/models/user.model");
+const Events = require("./src/models/events.model");
 const config = require("./src/config/config");
 
 const courses = [];
@@ -62,16 +62,31 @@ const users = [
   },
 ];
 
+const events = [];
+const categories = ["courses", "meetups"];
+
+const createUsersAndEvents = async () => {
+  for (let i = 0; i < 100; i++) {
+    const user = await Users.where({}).exec();
+
+    events.push({
+      title: `Event ${i}`,
+      description: `Event ${i} description`,
+      category: categories[Math.floor(Math.random() * categories.length)],
+      date: new Date(),
+      price: Math.floor(Math.random() * 100),
+      createdBy: user[Math.floor(Math.random() * user.length)]._id,
+    });
+  }
+  await Events.insertMany(events);
+};
+
 mongoose
   .connect(config.mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("MongoDB successfully connected..."))
   .catch((e) => console.log(e));
 
-const createUsers = async () => {
-  await Users.insertMany(users);
-};
-
-createUsers()
+createUsersAndEvents()
   .then(() => {
     mongoose.connection.close();
   })

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import jwtDecode from "jwt-decode";
 import {
   uploadImage,
   getUploadUserImageStatus,
@@ -13,12 +12,12 @@ import {
   userToken,
   createEvent,
   fetchEvents,
-} from "../../features/eLearningSlice";
-import { Button, ButtonGroup, Card, CardMedia, Grid } from "@mui/material";
+} from "../../features/eventsSlice";
+import { Button, Card, CardMedia, Grid } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
 import ImagePlaceholder from "../../assets/imagePlaceholder.png";
 import TextFieldsGenerator from "../utils/TextFieldsGenerator";
-import { makeStyles } from"@mui/styles";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   card: {

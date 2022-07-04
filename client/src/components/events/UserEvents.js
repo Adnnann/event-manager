@@ -7,10 +7,10 @@ import {
   fetchEvents,
   getEvents,
   getUserEvents,
-} from "../../features/eLearningSlice";
+} from "../../features/eventsSlice";
 import { Grid, Card, CardMedia, CardContent } from "@mui/material";
 
-import { makeStyles } from"@mui/styles";
+import { makeStyles } from "@mui/styles";
 import { Button, CardActions, Typography } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({

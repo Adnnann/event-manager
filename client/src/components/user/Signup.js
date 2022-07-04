@@ -6,7 +6,7 @@ import {
   signupUser,
   getSignedUser,
   cleanSignupMessage,
-} from "../../features/eLearningSlice";
+} from "../../features/eventsSlice";
 import {
   Card,
   CardActions,
@@ -24,7 +24,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import TextFieldsGenerator from "../utils/TextFieldsGenerator";
-import { makeStyles } from"@mui/styles";
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   card: {

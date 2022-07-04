@@ -9,7 +9,7 @@ import {
   getLoggedUserData,
   cleanLoginMessage,
   fetchEvents,
-} from "../../features/eLearningSlice";
+} from "../../features/eventsSlice";
 import {
   Card,
   CardActions,
@@ -20,8 +20,7 @@ import {
   Icon,
   Grid,
 } from "@mui/material";
-import { makeStyles } from"@mui/styles";
-
+import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -69,12 +68,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Login = ({socket}) => {
+const Login = ({ socket }) => {
   const classes = useStyles();
   const loggedUser = useSelector(getLoggedUserData);
   const [username, setUsername] = useState("");
   const [user, setUser] = useState("");
-
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -84,10 +82,8 @@ const Login = ({socket}) => {
     password: "",
   });
 
- 
-
   useEffect(() => {
-    console.log(socket)
+    console.log(socket);
     if (loggedUser?.token) {
       dispatch(userToken());
     }
@@ -102,10 +98,8 @@ const Login = ({socket}) => {
       dispatch(fetchEvents());
       navigate("/dashboard");
     }
-    console.log(socket)
+    console.log(socket);
   }, [loggedUser, socket]);
-
-
 
   const clickSubmit = () => {
     const user = {

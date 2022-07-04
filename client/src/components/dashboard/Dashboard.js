@@ -4,14 +4,15 @@ import {
   getCloseAccountFormStatus,
   getEditUserFormStatus,
   getEditUserPasswordFormStatus,
+  getEvents,
+  getFilter,
   getLoggedUserData,
   getUserToken,
-} from "../../features/eLearningSlice";
+} from "../../features/eventsSlice";
 import { useMediaQuery, Grid } from "@mui/material";
 
-import DashboardLeftPanel from "./DashboardLeftPanel";
 import DashboardRightPanel from "./DashboardRightPanel";
-import { makeStyles } from"@mui/styles";
+import { makeStyles } from "@mui/styles";
 import { useEffect } from "react";
 import { io } from "socket.io-client";
 import Events from "../events/Events";
@@ -52,35 +53,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Dashboard = ({socket}) => {
-  const classes = useStyles();
-  const dispatch = useDispatch();
-  const editUserProfile = useSelector(getEditUserFormStatus);
-  const editUserPassword = useSelector(getEditUserPasswordFormStatus);
-  const closeAccount = useSelector(getCloseAccountFormStatus);
+const Dashboard = ({ socket }) => {
   const loggedUser = useSelector(getLoggedUserData);
-  const token = useSelector(getUserToken);
-
-  const iPadAirScreen = useMediaQuery("(width:820px)");
-  const iPadMiniScreen = useMediaQuery("(width:768px)");
-  const surfaceDuo = useMediaQuery("(width:912px)");
-
-
-
   useEffect(() => {
     loggedUser?.user && socket?.emit("getUserData", loggedUser.user._id);
   }, []);
 
-  return (
-    <Grid container>
-      <Grid item xs={12} md={3} lg={3} xl={3}>
-        <DashboardLeftPanel />
-      </Grid>
-      <Grid item xs={12} md={9} lg={9} xl={9}>
-        <DashboardRightPanel socket={socket} />
-      </Grid>
-    </Grid>
-  );
+  return <DashboardRightPanel socket={socket} />;
 };
 
 export default Dashboard;

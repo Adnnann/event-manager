@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import eLearningReducer from "../features/eLearningSlice";
+import eventsReducer from "../features/eventsSlice";
 
 export const store = configureStore({
   reducer: {
-    eLearning: eLearningReducer
-  }
+    events: eventsReducer,
+  },
 });

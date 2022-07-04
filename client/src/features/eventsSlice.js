@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export const signupUser = createAsyncThunk(
-  "eLearning/signedupUser",
+  "events/signedupUser",
   async (user) => {
     return await axios
       .post(`api/users/`, user, {
@@ -47,7 +47,7 @@ export const userToken = createAsyncThunk("users/protected", async () => {
     .catch((error) => error.message);
 });
 ////////////////////////////////////////////
-export const fetchEvents = createAsyncThunk("eLearning/events", async () => {
+export const fetchEvents = createAsyncThunk("events/events", async () => {
   return await axios
     .get(`/api/events`)
     .then((response) => response.data)
@@ -55,7 +55,7 @@ export const fetchEvents = createAsyncThunk("eLearning/events", async () => {
 });
 
 export const fetchUserEvents = createAsyncThunk(
-  "eLearning/userEvents",
+  "events/userEvents",
   async (id) => {
     return await axios
       .post(`/api/userEvents/`, { id: id })
@@ -64,15 +64,12 @@ export const fetchUserEvents = createAsyncThunk(
   }
 );
 //////////////////////////////////////////////
-export const reLoginUser = createAsyncThunk(
-  "eLearning/loggedUser",
-  async (id) => {
-    return await axios
-      .get(`/api/users/relogin/${id}`)
-      .then((response) => response.data)
-      .catch((error) => error);
-  }
-);
+export const reLoginUser = createAsyncThunk("events/loggedUser", async (id) => {
+  return await axios
+    .get(`/api/users/relogin/${id}`)
+    .then((response) => response.data)
+    .catch((error) => error);
+});
 
 export const updateUserData = createAsyncThunk(
   "users/updateUserData",
@@ -103,7 +100,7 @@ export const updateUserDataByAdmin = createAsyncThunk(
   }
 );
 export const updateUserPassword = createAsyncThunk(
-  "eLearning/updatePassword",
+  "events/updatePassword",
   async (user) => {
     return await axios
       .put(`api/users/updateUserPassword/${user.param}`, user.data, {
@@ -130,7 +127,7 @@ export const closeAccount = createAsyncThunk(
   }
 );
 export const fetchUserCourses = createAsyncThunk(
-  "/eLearning/userCourses",
+  "/events/userCourses",
   async (user) => {
     return await axios
       .post(`/api/userCourses`, {
@@ -144,7 +141,7 @@ export const fetchUserCourses = createAsyncThunk(
 );
 
 export const fetchMentorCourses = createAsyncThunk(
-  "/eLearning/mentorCourses",
+  "/events/mentorCourses",
   async (courses) => {
     return await axios
       .post(`/api/mentorCourses`, {
@@ -160,7 +157,7 @@ export const fetchMentorCourses = createAsyncThunk(
 );
 
 export const createEvent = createAsyncThunk(
-  "eLearning/createEvent",
+  "events/createEvent",
   async (course) => {
     return await axios
       .post(`/api/events`, course, {
@@ -174,7 +171,7 @@ export const createEvent = createAsyncThunk(
   }
 );
 export const updateCourse = createAsyncThunk(
-  "eLearning/updateCourse",
+  "events/updateCourse",
   async (course) => {
     return await axios
       .put(`/api/course/${course.param}`, course.data, {
@@ -189,7 +186,7 @@ export const updateCourse = createAsyncThunk(
 );
 
 export const updateUser = createAsyncThunk(
-  "eLearning/updateUser",
+  "events/updateUser",
   async (user) => {
     return await axios
       .put(`/api/transaction/${user.param}`, user.data, {
@@ -203,7 +200,7 @@ export const updateUser = createAsyncThunk(
   }
 );
 export const removeCourse = createAsyncThunk(
-  "eLearning/deleteCourse",
+  "events/deleteCourse",
   async (param) => {
     const response = await axios.post(`/admin/course/${param}`, {
       headers: {
@@ -216,7 +213,7 @@ export const removeCourse = createAsyncThunk(
 );
 
 export const removeUser = createAsyncThunk(
-  "eLearning/deleteUser",
+  "events/deleteUser",
   async (param) => {
     const response = await axios.post(`/admin/user/${param}`, {
       headers: {
@@ -249,18 +246,15 @@ export const uploadImage = createAsyncThunk(
 );
 
 // admin
-export const fetchAllUsers = createAsyncThunk(
-  "eLearning/allUsers",
-  async () => {
-    return await axios
-      .get(`/admin/users`)
-      .then((response) => response.data)
-      .catch((error) => error);
-  }
-);
+export const fetchAllUsers = createAsyncThunk("events/allUsers", async () => {
+  return await axios
+    .get(`/admin/users`)
+    .then((response) => response.data)
+    .catch((error) => error);
+});
 
 export const fetchFilteredCourses = createAsyncThunk(
-  "eLearning/courses",
+  "events/courses",
   async (courses) => {
     return await axios
       .post(`/admin/courses`, {
@@ -277,7 +271,7 @@ export const fetchFilteredCourses = createAsyncThunk(
 );
 
 export const fetchCourses = createAsyncThunk(
-  "eLearning/courses",
+  "events/courses",
   async (courses) => {
     return await axios
       .post(`/admin/courses`, {
@@ -293,7 +287,7 @@ export const fetchCourses = createAsyncThunk(
   }
 );
 
-export const fetchUsers = createAsyncThunk("eLearning/users", async (users) => {
+export const fetchUsers = createAsyncThunk("events/users", async (users) => {
   return await axios
     .post(`/admin/users`, {
       firstValue: users.firstItem,
@@ -305,7 +299,7 @@ export const fetchUsers = createAsyncThunk("eLearning/users", async (users) => {
 });
 
 export const activateAccount = createAsyncThunk(
-  "eLearning/activateAccount",
+  "events/activateAccount",
   async (user) => {
     return await axios
       .put(`/admin/users/${user.param}`, {
@@ -318,7 +312,7 @@ export const activateAccount = createAsyncThunk(
 );
 
 export const enrollInCourse = createAsyncThunk(
-  "eLearning/enrollInCourse",
+  "events/enrollInCourse",
   async (user) => {
     return await axios
       .post(`/api/users/${user.param}`, {
@@ -331,7 +325,7 @@ export const enrollInCourse = createAsyncThunk(
 );
 
 export const completeCourse = createAsyncThunk(
-  "eLearning/completedCourse",
+  "events/completedCourse",
   async (user) => {
     return await axios
       .post(`/api/completedCourses`, {
@@ -343,18 +337,15 @@ export const completeCourse = createAsyncThunk(
   }
 );
 
-export const fetchMentors = createAsyncThunk(
-  "eLearning/allMentors",
-  async () => {
-    return await axios
-      .get(`/api/mentors`)
-      .then((response) => response.data)
-      .catch((error) => error);
-  }
-);
+export const fetchMentors = createAsyncThunk("events/allMentors", async () => {
+  return await axios
+    .get(`/api/mentors`)
+    .then((response) => response.data)
+    .catch((error) => error);
+});
 
 export const createUser = createAsyncThunk(
-  "eLearning/createUser",
+  "events/createUser",
   async (user) => {
     return await axios
       .post(`/admin/createUser`, user, {
@@ -424,10 +415,11 @@ const initialState = {
   //EVENT
   events: {},
   userEvents: {},
+  filter: "allEvents",
 };
 
-const eLearningSlice = createSlice({
-  name: "eLearning",
+const eventsSlice = createSlice({
+  name: "events",
   initialState,
   reducers: {
     setSigninUserForm: (state, action) => {
@@ -582,8 +574,11 @@ const eLearningSlice = createSlice({
     setClearSignoutUserMessage: (state, action) => {
       state.loggedUser = {};
     },
+    setFilter: (state, action) => {
+      state.filter = action.payload;
+    },
     //reset store state after logout or delete of account
-    cleanStore: () => initialState,
+    resetStore: () => initialState,
   },
   extraReducers: {
     [signupUser.fulfilled]: (state, { payload }) => {
@@ -693,82 +688,74 @@ const eLearningSlice = createSlice({
   },
 });
 
-export const getSigninUserFormStatus = (state) =>
-  state.eLearning.singinUserForm;
-export const getSignupUserFormStatus = (state) =>
-  state.eLearning.singupUserForm;
-export const getSignedUser = (state) => state.eLearning.signedupUser;
-export const getLoggedUserData = (state) => state.eLearning.loggedUser;
-export const getEditUserFormStatus = (state) => state.eLearning.editUserForm;
+export const getSigninUserFormStatus = (state) => state.events.singinUserForm;
+export const getSignupUserFormStatus = (state) => state.events.singupUserForm;
+export const getSignedUser = (state) => state.events.signedupUser;
+export const getLoggedUserData = (state) => state.events.loggedUser;
+export const getEditUserFormStatus = (state) => state.events.editUserForm;
 export const getEditUserPasswordFormStatus = (state) =>
-  state.eLearning.editUserPasswordForm;
-export const getUploadUserImageStatus = (state) => state.eLearning.uploadImage;
+  state.events.editUserPasswordForm;
+export const getUploadUserImageStatus = (state) => state.events.uploadImage;
 export const getUpdateUserPasswordStatus = (state) =>
-  state.eLearning.updatePassword;
+  state.events.updatePassword;
 export const getCloseAccountFormStatus = (state) =>
-  state.eLearning.closeAccountForm;
+  state.events.closeAccountForm;
 export const getCloseAccountModalStatus = (state) =>
-  state.eLearning.closeAccountModal;
-export const getUserToken = (state) => state.eLearning.userToken;
-export const getErrors = (state) => state.eLearning.showErrors;
-export const getUserData = (state) => state.eLearning.userData;
-export const getUpdateUserStatus = (state) => state.eLearning.updateUser;
-export const getCloseAccountStatus = (state) =>
-  state.eLearning.closeAccountStatus;
-export const getPasswordCheckData = (state) => state.eLearning.passwordCheck;
-export const getUserDataToDisplay = (state) =>
-  state.eLearning.userDataToDisplay;
-export const getDeleteAccountModal = (state) =>
-  state.eLearning.closeAccountModal;
-export const getUserToEdit = (state) => state.eLearning.userToEdit;
+  state.events.closeAccountModal;
+export const getUserToken = (state) => state.events.userToken;
+export const getErrors = (state) => state.events.showErrors;
+export const getUserData = (state) => state.events.userData;
+export const getUpdateUserStatus = (state) => state.events.updateUser;
+export const getCloseAccountStatus = (state) => state.events.closeAccountStatus;
+export const getPasswordCheckData = (state) => state.events.passwordCheck;
+export const getUserDataToDisplay = (state) => state.events.userDataToDisplay;
+export const getDeleteAccountModal = (state) => state.events.closeAccountModal;
+export const getUserToEdit = (state) => state.events.userToEdit;
 ////
-export const getEvents = (state) => state.eLearning.events;
-export const getUserEvents = (state) => state.eLearning.userEvents;
+export const getEvents = (state) => state.events.events;
+export const getUserEvents = (state) => state.events.userEvents;
 /////
-export const getDashboardData = (state) => state.eLearning.dashboardData;
-export const getEventData = (state) => state.eLearning.addEvent;
-export const getFilter = (state) => state.eLearning.filterTerm;
-export const getUsersDisplayPage = (state) => state.eLearning.usersDisplayPage;
-export const getCoursesDisplayPage = (state) =>
-  state.eLearning.coursesDisplayPage;
-export const getUpdateCourseStatus = (state) => state.eLearning.updateCourse;
-export const getDeleteUserMessage = (state) => state.eLearning.deleteUser;
+export const getDashboardData = (state) => state.events.dashboardData;
+export const getEventData = (state) => state.events.addEvent;
+export const getFilter = (state) => state.events.filter;
+export const getUsersDisplayPage = (state) => state.events.usersDisplayPage;
+export const getCoursesDisplayPage = (state) => state.events.coursesDisplayPage;
+export const getUpdateCourseStatus = (state) => state.events.updateCourse;
+export const getDeleteUserMessage = (state) => state.events.deleteUser;
 
-export const getUserCourseData = (state) => state.eLearning.userCourseData;
-export const getDeleteId = (state) => state.eLearning.deleteId;
-export const getOpenDeleteModal = (state) => state.eLearning.openDeleteModal;
-export const getDeleteCourseMessage = (state) => state.eLearning.deleteCourse;
+export const getUserCourseData = (state) => state.events.userCourseData;
+export const getDeleteId = (state) => state.events.deleteId;
+export const getOpenDeleteModal = (state) => state.events.openDeleteModal;
+export const getDeleteCourseMessage = (state) => state.events.deleteCourse;
 export const getCoursesOverviewLevel = (state) =>
-  state.eLearning.transactionsOverviewLevel;
-export const getCourseToEdit = (state) => state.eLearning.courseToEdit;
-export const getCreateCourseMessage = (state) => state.eLearning.addEvent;
-export const getSignedOutUserStatus = (state) => state.eLearning.signedOut;
+  state.events.transactionsOverviewLevel;
+export const getCourseToEdit = (state) => state.events.courseToEdit;
+export const getCreateCourseMessage = (state) => state.events.addEvent;
+export const getSignedOutUserStatus = (state) => state.events.signedOut;
 
 export const getCourseOverviewModal = (state) =>
-  state.eLearning.courseOverviewModal;
+  state.events.courseOverviewModal;
 export const getDisplayUserCoursesStatus = (state) =>
-  state.eLearning.displayUserCourses;
-export const getEnrollInCourseMessage = (state) =>
-  state.eLearning.enrollInCourse;
+  state.events.displayUserCourses;
+export const getEnrollInCourseMessage = (state) => state.events.enrollInCourse;
 export const getCompletedCourseMessage = (state) =>
-  state.eLearning.completedCourse;
+  state.events.completedCourse;
 export const getCourseDeleteModalStatus = (state) =>
-  state.eLearning.courseDeleteModal;
-export const getStoreStatus = (state) => state.eLearning.storeStatus;
+  state.events.courseDeleteModal;
+export const getStoreStatus = (state) => state.events.storeStatus;
 
 // admin
-export const getUsers = (state) => state.eLearning.users;
-export const getCourses = (state) => state.eLearning.courses;
+export const getUsers = (state) => state.events.users;
+export const getCourses = (state) => state.events.courses;
 export const getActivateAccountMessage = (state) =>
-  state.eLearning.activateAccount;
-export const getAllMentors = (state) => state.eLearning.allMentors;
-export const getMentorCourses = (state) => state.eLearning.mentorCourses;
-export const getSelectedFilterTerm = (state) =>
-  state.eLearning.selectedFilterTerm;
-export const getCreateUserStatus = (state) => state.eLearning.createUser;
-export const getStudentFilters = (state) => state.eLearning.studentFilters;
-export const getMentorFilters = (state) => state.eLearning.mentorFilters;
-export const getAdminFilters = (state) => state.eLearning.adminFilters;
+  state.events.activateAccount;
+export const getAllMentors = (state) => state.events.allMentors;
+export const getMentorCourses = (state) => state.events.mentorCourses;
+export const getSelectedFilterTerm = (state) => state.events.selectedFilterTerm;
+export const getCreateUserStatus = (state) => state.events.createUser;
+export const getStudentFilters = (state) => state.events.studentFilters;
+export const getMentorFilters = (state) => state.events.mentorFilters;
+export const getAdminFilters = (state) => state.events.adminFilters;
 
 export const {
   setSigninUserForm,
@@ -823,6 +810,7 @@ export const {
   setLoggedUserStatus,
   setStoreStatus,
   setClearSignoutUserMessage,
-} = eLearningSlice.actions;
+  resetStore,
+} = eventsSlice.actions;
 
-export default eLearningSlice.reducer;
+export default eventsSlice.reducer;

@@ -2,11 +2,11 @@ import { useSelector } from "react-redux";
 import {
   getSigninUserFormStatus,
   getSignupUserFormStatus,
-} from "../../features/eLearningSlice";
+} from "../../features/eventsSlice";
 import Login from "./Login";
 import Signup from "./Signup";
 
-const LoginOrSignup = ({socket}) => {
+const LoginOrSignup = ({ socket }) => {
   const displayLoginForm = useSelector(getSigninUserFormStatus);
   const displaySignupForm = useSelector(getSignupUserFormStatus);
 

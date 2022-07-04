@@ -18,7 +18,7 @@ const EventsSchema = new mongoose.Schema({
   },
   date: {
     type: Date,
-    required: "Course duration is required!",
+    required: "Date of event is required!",
   },
   courseImage: {
     type: String,
