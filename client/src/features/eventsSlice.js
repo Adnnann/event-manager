@@ -46,7 +46,7 @@ export const userToken = createAsyncThunk("users/protected", async () => {
     .then((response) => response.data)
     .catch((error) => error.message);
 });
-////////////////////////////////////////////
+
 export const fetchEvents = createAsyncThunk("events/events", async () => {
   return await axios
     .get(`/api/events`)
@@ -63,99 +63,6 @@ export const fetchUserEvents = createAsyncThunk(
       .catch((error) => error);
   }
 );
-//////////////////////////////////////////////
-export const reLoginUser = createAsyncThunk("events/loggedUser", async (id) => {
-  return await axios
-    .get(`/api/users/relogin/${id}`)
-    .then((response) => response.data)
-    .catch((error) => error);
-});
-
-export const updateUserData = createAsyncThunk(
-  "users/updateUserData",
-  async (user) => {
-    return await axios
-      .put(`/api/users/${user.param}`, user.data, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => response.data)
-      .catch((error) => error);
-  }
-);
-export const updateUserDataByAdmin = createAsyncThunk(
-  "users/updateUserData",
-  async (user) => {
-    return await axios
-      .put(`/api/users/${user.param}`, user.data, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => response.data)
-      .catch((error) => error);
-  }
-);
-export const updateUserPassword = createAsyncThunk(
-  "events/updatePassword",
-  async (user) => {
-    return await axios
-      .put(`api/users/updateUserPassword/${user.param}`, user.data, {
-        header: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => response.data)
-      .catch((error) => error);
-  }
-);
-
-export const closeAccount = createAsyncThunk(
-  "users/closeAccountStatus",
-  async (user) => {
-    const response = await axios.delete(`/api/users/${user.param}`, user, {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-    return response.data;
-  }
-);
-export const fetchUserCourses = createAsyncThunk(
-  "/events/userCourses",
-  async (user) => {
-    return await axios
-      .post(`/api/userCourses`, {
-        userCourses: user.userCourses,
-        completedCourses: user.completedCourses,
-        filterTerm: user.filterTerm || undefined,
-      })
-      .then((response) => response.data)
-      .catch((error) => error);
-  }
-);
-
-export const fetchMentorCourses = createAsyncThunk(
-  "/events/mentorCourses",
-  async (courses) => {
-    return await axios
-      .post(`/api/mentorCourses`, {
-        mentorId: courses.mentorId,
-        firstItem: courses.firstItem,
-        lastItem: courses.lastItem,
-        filterTerm: courses.filterTerm,
-        status: courses.status,
-      })
-      .then((response) => response.data)
-      .catch((error) => error);
-  }
-);
-
 export const createEvent = createAsyncThunk(
   "events/createEvent",
   async (course) => {
@@ -170,73 +77,8 @@ export const createEvent = createAsyncThunk(
       .catch((error) => error);
   }
 );
-export const updateCourse = createAsyncThunk(
-  "events/updateCourse",
-  async (course) => {
-    return await axios
-      .put(`/api/course/${course.param}`, course.data, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => response.data)
-      .catch((error) => error);
-  }
-);
-
-export const updateUser = createAsyncThunk(
-  "events/updateUser",
-  async (user) => {
-    return await axios
-      .put(`/api/transaction/${user.param}`, user.data, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => response.data)
-      .catch((error) => error);
-  }
-);
-export const removeCourse = createAsyncThunk(
-  "events/deleteCourse",
-  async (param) => {
-    const response = await axios.post(`/admin/course/${param}`, {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-    return response.data;
-  }
-);
-
-export const removeUser = createAsyncThunk(
-  "events/deleteUser",
-  async (param) => {
-    const response = await axios.post(`/admin/user/${param}`, {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-    return response.data;
-  }
-);
-
-export const fetchUserCourseData = createAsyncThunk(
-  "users/transactionData",
-  async (param) => {
-    return await axios
-      .get(`/api/transaction/${param}`)
-      .then((response) => response.data)
-      .catch((error) => error);
-  }
-);
-//upload image
 export const uploadImage = createAsyncThunk(
-  "library/uploadImage",
+  "events/uploadImage",
   async (file) => {
     return await axios
       .post("/uploadImage", file)
@@ -244,175 +86,26 @@ export const uploadImage = createAsyncThunk(
       .catch((error) => error);
   }
 );
-
-// admin
-export const fetchAllUsers = createAsyncThunk("events/allUsers", async () => {
-  return await axios
-    .get(`/admin/users`)
-    .then((response) => response.data)
-    .catch((error) => error);
-});
-
-export const fetchFilteredCourses = createAsyncThunk(
-  "events/courses",
-  async (courses) => {
+export const registerForEvent = createAsyncThunk(
+  "events/registration",
+  async (id) => {
     return await axios
-      .post(`/admin/courses`, {
-        filterTerm: courses.filterTerm,
-        filterLevel: courses.filterLevel || undefined,
-        filterDuration: courses.filterDuration || undefined,
-        page: courses.page,
-        firstValue: courses.firstItem,
-        lastValue: courses.lastItem,
-      })
-      .then((response) => response.data)
-      .catch((error) => error);
+      .put("/events/registrations", id)
+      .then((res) => res.data)
+      .catch((err) => console.log(err));
   }
 );
-
-export const fetchCourses = createAsyncThunk(
-  "events/courses",
-  async (courses) => {
-    return await axios
-      .post(`/admin/courses`, {
-        filterTerm: courses.filterTerm,
-        filterLevel: courses.filterLevel || undefined,
-        filterDuration: courses.filterDuration || undefined,
-        page: courses.page,
-        firstValue: courses.firstItem,
-        lastValue: courses.lastItem,
-      })
-      .then((response) => response.data)
-      .catch((error) => error);
-  }
-);
-
-export const fetchUsers = createAsyncThunk("events/users", async (users) => {
-  return await axios
-    .post(`/admin/users`, {
-      firstValue: users.firstItem,
-      lastValue: users.lastItem,
-      filterTerm: users.filterTerm,
-    })
-    .then((response) => response.data)
-    .catch((error) => error);
-});
-
-export const activateAccount = createAsyncThunk(
-  "events/activateAccount",
-  async (user) => {
-    return await axios
-      .put(`/admin/users/${user.param}`, {
-        userStatus: user.userStatus,
-        role: user.role,
-      })
-      .then((response) => response.data)
-      .catch((error) => error);
-  }
-);
-
-export const enrollInCourse = createAsyncThunk(
-  "events/enrollInCourse",
-  async (user) => {
-    return await axios
-      .post(`/api/users/${user.param}`, {
-        id: user.id,
-        courseId: user.courseId,
-      })
-      .then((response) => response.data)
-      .catch((error) => error);
-  }
-);
-
-export const completeCourse = createAsyncThunk(
-  "events/completedCourse",
-  async (user) => {
-    return await axios
-      .post(`/api/completedCourses`, {
-        id: user.id,
-        courseId: user.courseId,
-      })
-      .then((response) => response.data)
-      .catch((error) => error);
-  }
-);
-
-export const fetchMentors = createAsyncThunk("events/allMentors", async () => {
-  return await axios
-    .get(`/api/mentors`)
-    .then((response) => response.data)
-    .catch((error) => error);
-});
-
-export const createUser = createAsyncThunk(
-  "events/createUser",
-  async (user) => {
-    return await axios
-      .post(`/admin/createUser`, user, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => response.data)
-      .catch((error) => error);
-  }
-);
-
 const initialState = {
-  // user data
   singinUserForm: true,
   singupUserForm: false,
   signedupUser: {},
-  editUserForm: false,
-  editUserPasswordForm: false,
   uploadImage: {},
-  updatePassword: {},
-  closeAccountForm: false,
-  closeAccountModal: false,
   userData: {},
-  updateUser: {},
   loggedUser: {},
   signedOut: {},
   userToken: {},
-  userDataToDisplay: {},
-  closeAccountStatus: {},
-  passwordCheck: {},
-  deleteAccountModal: true,
-  deleteUser: {},
-  // admin
-  allUsers: {},
-  usersDisplayPage: 1,
-  allCourses: {},
-  coursesDisplayPage: 1,
-  courses: {},
-  users: {},
-  updateCourse: {},
-  activateAccount: {},
-  createUser: {},
-  studentFilters: {},
-  mentorFilters: {},
-  adminFilters: {},
-  // courses
-  userCourses: {},
-  dashboardData: [],
-  addEvent: {},
-  filterTerm: "",
-  updatedUserCourse: {},
-  deleteCourse: {},
-  userCourseData: {},
-  courseToEdit: {},
-  userToEdit: {},
   addEvent: {},
   courseOverviewModal: [],
-  displayUserCourses: false,
-  completedCourse: {},
-  allMentors: {},
-  mentorCourses: {},
-  selectedFilterTerm: "",
-  courseDeleteModal: false,
-  store: {},
-  //EVENT
   events: {},
   userEvents: {},
   filter: "allEvents",
@@ -428,93 +121,20 @@ const eventsSlice = createSlice({
     setSignupUserForm: (state, action) => {
       state.singupUserForm = action.payload;
     },
-    setEditUserProfileForm: (state, action) => {
-      state.editUserForm = action.payload;
-    },
-    setEditUserPasswordForm: (state, action) => {
-      state.editUserPasswordForm = action.payload;
-    },
-    clearUpdatePassword: (state, action) => {
-      state.updatePassword = {};
-    },
-    setCloseAccountForm: (state, action) => {
-      state.closeAccountForm = action.payload;
-    },
-    setCloseAccountModal: (state, action) => {
-      state.closeAccountModal = action.payload;
-    },
     cleanSignupMessage: (state, action) => {
       state.signedupUser = {};
     },
     cleanLoginMessage: (state, action) => {
       state.loggedUser = {};
     },
-    cleanUpdatedUserDataStatus: (state, action) => {
-      state.updateUser = {};
-    },
-    cleanPasswordCheckData: (state, action) => {
-      state.passwordCheck = {};
-    },
     userDataToDisplay: (state, action) => {
       state.userDataToDisplay = action.payload;
-    },
-    dashboardData: (state, action) => {
-      state.dashboardData = [...state.dashboardData, action.payload];
     },
     cleanEventData: (state, action) => {
       state.addEvent = {};
     },
-    cleanUserUpdateMessage: (state, action) => {
-      state.updateUser = {};
-    },
-    cleanCourseUpdatedMessage: (state, action) => {
-      state.updateCourse = {};
-    },
     cleanUserFetchDataStatus: (state, action) => {
       delete state.loggedUser["message"];
-    },
-    setFilter: (state, action) => {
-      state.filterTerm = action.payload;
-    },
-    cleanFilterTerm: (state, action) => {
-      state.filterTerm = "";
-      state.selectedFilterTerm = "";
-    },
-    cleanDeleteCourseMessage: (state, payload) => {
-      state.deleteCourse = {};
-    },
-    setCoursesOverviewLevel: (state, action) => {
-      state.transactionsOverviewLevel = action.payload;
-    },
-    setStatisticsOverviewLevel: (state, action) => {
-      state.statisticsOverviewLevel = action.payload;
-    },
-    setDeleteAccountModal: (state, action) => {
-      state.deleteAccountModal = action.payload;
-    },
-    setUsersDisplayPage: (state, action) => {
-      state.usersDisplayPage = action.payload;
-    },
-    setCoursesDisplayPage: (state, action) => {
-      state.coursesDisplayPage = action.payload;
-    },
-    setCourseToEdit: (state, action) => {
-      state.courseToEdit =
-        Object.keys(state.courses).length !== 0
-          ? Object.values(state.courses.data).filter(
-              (item) => item._id === action.payload
-            )[0]
-          : Object.values(state.mentorCourses.data).filter(
-              (item) => item._id === action.payload
-            )[0];
-    },
-    setUserToEdit: (state, action) => {
-      state.userToEdit = Object.values(state.users.data).filter(
-        (item) => item._id === action.payload
-      )[0];
-    },
-    setLoggedUserToEdit: (state, action) => {
-      state.userToEdit = action.payload;
     },
     cleanUploadImageStatus: (state, action) => {
       state.uploadImage = {};
@@ -522,54 +142,11 @@ const eventsSlice = createSlice({
     cleanAddEventMessage: (state, action) => {
       state.addEvent = {};
     },
-    cleanActivateAccountMessage: (state, action) => {
-      state.activateAccount = {};
-    },
-    setShowModalCourseWindow: (state, action) => {
-      state.courseOverviewModal[action.payload] =
-        !state.courseOverviewModal[action.payload];
-    },
-    setDisplayUserCourses: (state, action) => {
-      state.displayUserCourses = action.payload;
-    },
-    cleanCompletedCourseMessage: (state, action) => {
-      state.completedCourse = {};
-    },
-    cleanEnrollInCourseMessage: (state, action) => {
-      state.enrollInCourse = {};
-    },
-    setFilterTerm: (state, action) => {
-      state.selectedFilterTerm = state.filterTerm;
-    },
-    setCourseDeleteModal: (state, action) => {
-      state.courseDeleteModal = action.payload;
-    },
-    incrementNumOfCourses: (state, action) => {
-      state.loggedUser.courseNum += 1;
-    },
-    cleanCreateUserStatus: (state, action) => {
-      state.createUser = {};
-    },
-    setStudentFilters: (state, action) => {
-      state.studentFilters = action.payload;
-    },
-    setMentorFilters: (state, action) => {
-      state.mentorFilters = action.payload;
-    },
-    setAdminFilters: (state, action) => {
-      state.adminFilters = action.payload;
-    },
-    cleanReloginStatus: (state, action) => {
-      delete state.loggedUser["relogin"];
-    },
     setUserToken: (state, action) => {
       state.userToken = action.payload;
     },
     setLoggedUserStatus: (state, action) => {
       state.loggedUser = "signout";
-    },
-    setStoreStatus: (state, action) => {
-      state.storeStatus = action.payload;
     },
     setClearSignoutUserMessage: (state, action) => {
       state.loggedUser = {};
@@ -593,37 +170,6 @@ const eventsSlice = createSlice({
     [userToken.fulfilled]: (state, { payload }) => {
       return { ...state, userToken: payload };
     },
-
-    [updateUserData.fulfilled]: (state, { payload }) => {
-      if (payload.error) {
-        return {
-          ...state,
-          updateUser: payload,
-        };
-      }
-
-      return {
-        ...state,
-        updateUser: payload,
-        loggedUser: {
-          token: payload.token,
-          user: payload.data,
-        },
-      };
-    },
-    [updateUserDataByAdmin.fulfilled]: (state, { payload }) => {
-      return {
-        ...state,
-        updateUser: payload,
-      };
-    },
-    [closeAccount.fulfilled]: (state, { payload }) => {
-      return { ...state, closeAccountStatus: payload };
-    },
-    [updateUserPassword.fulfilled]: (state, { payload }) => {
-      return { ...state, updatedUserData: payload };
-    },
-    // Courses
     [createEvent.fulfilled]: (state, { payload }) => {
       return { ...state, addEvent: payload };
     },
@@ -634,56 +180,8 @@ const eventsSlice = createSlice({
     [fetchUserEvents.fulfilled]: (state, { payload }) => {
       return { ...state, userEvents: payload };
     },
-    ////////////
-    [updateUser.fulfilled]: (state, { payload }) => {
-      return { ...state, updatedUser: payload };
-    },
-    [updateCourse.fulfilled]: (state, { payload }) => {
-      return { ...state, updateCourse: payload };
-    },
-    [fetchUserCourseData.fulfilled]: (state, { payload }) => {
-      return { ...state, userCourseData: payload };
-    },
-    [removeCourse.fulfilled]: (state, { payload }) => {
-      return { ...state, deleteCourse: payload };
-    },
     [uploadImage.fulfilled]: (state, { payload }) => {
       return { ...state, uploadImage: payload };
-    },
-    [updateUserPassword.fulfilled]: (state, { payload }) => {
-      return { ...state, updatePassword: payload };
-    },
-    // admin
-    [fetchAllUsers.fulfilled]: (state, { payload }) => {
-      return { ...state, allUsers: payload };
-    },
-
-    [fetchCourses.fulfilled]: (state, { payload }) => {
-      return { ...state, courses: payload };
-    },
-    [fetchUsers.fulfilled]: (state, { payload }) => {
-      return { ...state, users: payload };
-    },
-    [activateAccount.fulfilled]: (state, { payload }) => {
-      return { ...state, activateAccount: payload };
-    },
-    [enrollInCourse.fulfilled]: (state, { payload }) => {
-      return { ...state, enrollInCourse: payload };
-    },
-    [completeCourse.fulfilled]: (state, { payload }) => {
-      return { ...state, completedCourse: payload };
-    },
-    [fetchMentors.fulfilled]: (state, { payload }) => {
-      return { ...state, allMentors: payload };
-    },
-    [fetchMentorCourses.fulfilled]: (state, { payload }) => {
-      return { ...state, mentorCourses: payload };
-    },
-    [createUser.fulfilled]: (state, { payload }) => {
-      return { ...state, createUser: payload };
-    },
-    [reLoginUser.fulfilled]: (state, { payload }) => {
-      return { ...state, loggedUser: payload };
     },
   },
 });
@@ -692,124 +190,23 @@ export const getSigninUserFormStatus = (state) => state.events.singinUserForm;
 export const getSignupUserFormStatus = (state) => state.events.singupUserForm;
 export const getSignedUser = (state) => state.events.signedupUser;
 export const getLoggedUserData = (state) => state.events.loggedUser;
-export const getEditUserFormStatus = (state) => state.events.editUserForm;
-export const getEditUserPasswordFormStatus = (state) =>
-  state.events.editUserPasswordForm;
 export const getUploadUserImageStatus = (state) => state.events.uploadImage;
-export const getUpdateUserPasswordStatus = (state) =>
-  state.events.updatePassword;
-export const getCloseAccountFormStatus = (state) =>
-  state.events.closeAccountForm;
-export const getCloseAccountModalStatus = (state) =>
-  state.events.closeAccountModal;
 export const getUserToken = (state) => state.events.userToken;
-export const getErrors = (state) => state.events.showErrors;
-export const getUserData = (state) => state.events.userData;
-export const getUpdateUserStatus = (state) => state.events.updateUser;
-export const getCloseAccountStatus = (state) => state.events.closeAccountStatus;
-export const getPasswordCheckData = (state) => state.events.passwordCheck;
-export const getUserDataToDisplay = (state) => state.events.userDataToDisplay;
-export const getDeleteAccountModal = (state) => state.events.closeAccountModal;
-export const getUserToEdit = (state) => state.events.userToEdit;
-////
 export const getEvents = (state) => state.events.events;
 export const getUserEvents = (state) => state.events.userEvents;
-/////
-export const getDashboardData = (state) => state.events.dashboardData;
 export const getEventData = (state) => state.events.addEvent;
 export const getFilter = (state) => state.events.filter;
-export const getUsersDisplayPage = (state) => state.events.usersDisplayPage;
-export const getCoursesDisplayPage = (state) => state.events.coursesDisplayPage;
-export const getUpdateCourseStatus = (state) => state.events.updateCourse;
-export const getDeleteUserMessage = (state) => state.events.deleteUser;
-
-export const getUserCourseData = (state) => state.events.userCourseData;
-export const getDeleteId = (state) => state.events.deleteId;
-export const getOpenDeleteModal = (state) => state.events.openDeleteModal;
-export const getDeleteCourseMessage = (state) => state.events.deleteCourse;
-export const getCoursesOverviewLevel = (state) =>
-  state.events.transactionsOverviewLevel;
-export const getCourseToEdit = (state) => state.events.courseToEdit;
-export const getCreateCourseMessage = (state) => state.events.addEvent;
+export const getCreateEventMessage = (state) => state.events.addEvent;
 export const getSignedOutUserStatus = (state) => state.events.signedOut;
-
-export const getCourseOverviewModal = (state) =>
-  state.events.courseOverviewModal;
-export const getDisplayUserCoursesStatus = (state) =>
-  state.events.displayUserCourses;
-export const getEnrollInCourseMessage = (state) => state.events.enrollInCourse;
-export const getCompletedCourseMessage = (state) =>
-  state.events.completedCourse;
-export const getCourseDeleteModalStatus = (state) =>
-  state.events.courseDeleteModal;
-export const getStoreStatus = (state) => state.events.storeStatus;
-
-// admin
-export const getUsers = (state) => state.events.users;
-export const getCourses = (state) => state.events.courses;
-export const getActivateAccountMessage = (state) =>
-  state.events.activateAccount;
-export const getAllMentors = (state) => state.events.allMentors;
-export const getMentorCourses = (state) => state.events.mentorCourses;
-export const getSelectedFilterTerm = (state) => state.events.selectedFilterTerm;
-export const getCreateUserStatus = (state) => state.events.createUser;
-export const getStudentFilters = (state) => state.events.studentFilters;
-export const getMentorFilters = (state) => state.events.mentorFilters;
-export const getAdminFilters = (state) => state.events.adminFilters;
 
 export const {
   setSigninUserForm,
   setSignupUserForm,
-  setEditUserProfileForm,
-  setEditUserPasswordForm,
-  clearUpdatePassword,
-  setCloseAccountForm,
-  setCloseAccountModal,
-  cleanRegisteredUserData,
-  cleanUpdatedUserData,
-  cleanPasswordCheckData,
-  dashboardData,
-  cleanEventData,
   setFilter,
-  cleanCourseUpdatedData,
-  setOpenDeleteModal,
-  cleanDeleteCourseData,
-  setCoursesOverviewLevel,
-  setStatisticsOverviewLevel,
-  setDeleteAccountModal,
-  cleanStore,
   cleanLoginMessage,
   cleanSignupMessage,
   cleanUploadImageStatus,
   cleanAddEventMessage,
-  //admin
-  setUsersDisplayPage,
-  setCoursesDisplayPage,
-  cleanDeleteCourseMessage,
-  cleanCourseUpdatedMessage,
-  cleanUserUpdateMessage,
-  setCourseToEdit,
-  setUserToEdit,
-  cleanActivateAccountMessage,
-  setShowModalCourseWindow,
-  setDisplayUserCourses,
-  cleanEnrollInCourseMessage,
-  cleanCompletedCourseMessage,
-  setFilterTerm,
-  setCourseDeleteModal,
-  incrementNumOfCourses,
-  cleanFilterTerm,
-  cleanCreateUserStatus,
-  setStudentFilters,
-  setAdminFilters,
-  setMentorFilters,
-  cleanUserFetchDataStatus,
-  setLoggedUserToEdit,
-  cleanReloginStatus,
-  setUserToken,
-  setLoggedUserStatus,
-  setStoreStatus,
-  setClearSignoutUserMessage,
   resetStore,
 } = eventsSlice.actions;
 

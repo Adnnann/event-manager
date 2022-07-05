@@ -33,6 +33,9 @@ const EventsSchema = new mongoose.Schema({
   category: {
     type: String,
   },
+  participants: {
+    type: Array,
+  },
   updated: Date,
 });
 

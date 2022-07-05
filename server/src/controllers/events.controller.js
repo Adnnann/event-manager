@@ -22,7 +22,6 @@ const getEvents = (req, res) => {
 };
 
 const getUserEvents = (req, res) => {
-  console.log(req.body);
   Event.find({})
     .where({ createdBy: req.body.id })
     .exec((err, events) => {
@@ -58,12 +57,18 @@ const removeEvent = (req, res, next) => {
   });
 };
 
+const registerForEvent = (req, res) => {
+  Event.findById(req.body.id).update({
+    $push: { participants: req.body.id },
+  });
+};
+
 const eventByID = (req, res, next, id) => {
-  Event.findById(id).exec((err, Event) => {
-    if (err || !Event) {
+  Event.findById(id).exec((err, event) => {
+    if (err || !event) {
       return res.send({ error: dbErrorHandlers.getErrorMessage(err) });
     }
-    req.Event = Event;
+    req.event = event;
     next();
   });
 };

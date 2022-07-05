@@ -65,10 +65,10 @@ const users = [
 const events = [];
 const categories = ["courses", "meetups"];
 
-const createUsersAndEvents = async () => {
+const createEvents = async () => {
+  await Users.insertMany(users);
+  const user = await Users.where({}).exec();
   for (let i = 0; i < 100; i++) {
-    const user = await Users.where({}).exec();
-
     events.push({
       title: `Event ${i}`,
       description: `Event ${i} description`,
@@ -76,6 +76,7 @@ const createUsersAndEvents = async () => {
       date: new Date(),
       price: Math.floor(Math.random() * 100),
       createdBy: user[Math.floor(Math.random() * user.length)]._id,
+      participants: [],
     });
   }
   await Events.insertMany(events);
@@ -86,7 +87,7 @@ mongoose
   .then(() => console.log("MongoDB successfully connected..."))
   .catch((e) => console.log(e));
 
-createUsersAndEvents()
+createEvents()
   .then(() => {
     mongoose.connection.close();
   })

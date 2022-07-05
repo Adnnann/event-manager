@@ -12,6 +12,7 @@ import {
   userToken,
   createEvent,
   fetchEvents,
+  getCreateEventMessage,
 } from "../../features/eventsSlice";
 import { Button, Card, CardMedia, Grid } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
@@ -86,7 +87,7 @@ const AddEvent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const addEventStatus = useSelector(getCreateCourseMessage);
+  const addEventStatus = useSelector(getCreateEventMessage);
   const uploadImageStatus = useSelector(getUploadUserImageStatus);
   const loggedUser = useSelector(getLoggedUserData);
   const classes = useStyles();
