@@ -17,10 +17,12 @@ router
   .put(eventCtrl.updateEvent)
   .delete(eventCtrl.removeEvent);
 
-  router
-  .route("/api/eventRegistration")
-  .post(eventCtrl.registerForEvent)
-  
+router.route("/api/eventRegistration").post(eventCtrl.registerForEvent);
+
+router
+  .route("/api/eventRegistrationResponse")
+  .post(eventCtrl.registrationResponse);
+
 router.param("eventId", eventCtrl.eventByID);
 
 export default router;

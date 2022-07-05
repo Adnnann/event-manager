@@ -9,6 +9,7 @@ import {
   getLoggedUserData,
   cleanLoginMessage,
   fetchEvents,
+  fetchUserEvents,
 } from "../../features/eventsSlice";
 import {
   Card,
@@ -71,8 +72,6 @@ const useStyles = makeStyles((theme) => ({
 const Login = ({ socket }) => {
   const classes = useStyles();
   const loggedUser = useSelector(getLoggedUserData);
-  const [username, setUsername] = useState("");
-  const [user, setUser] = useState("");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -83,7 +82,6 @@ const Login = ({ socket }) => {
   });
 
   useEffect(() => {
-  
     if (loggedUser?.token) {
       dispatch(userToken());
     }
@@ -96,6 +94,7 @@ const Login = ({ socket }) => {
       };
       socket?.emit("newUser", user);
       dispatch(fetchEvents());
+      dispatch(fetchUserEvents(loggedUser.user._id));
       navigate("/dashboard");
     }
     console.log(socket);

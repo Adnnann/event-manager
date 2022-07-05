@@ -7,7 +7,8 @@ import {
   getFilter,
   getLoggedUserData,
   getUserEvents,
-  registerForEvent
+  registerForEvent,
+  registrationResponse,
 } from "../../features/eventsSlice";
 import {
   Grid,
@@ -25,36 +26,35 @@ import { Button, CardActions, Typography } from "@mui/material";
 import DropdownButtons from "../utils/DropdownButtons";
 import Event from "./Event";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faClose
-} from "@fortawesome/free-solid-svg-icons";
+import { faClose, faCommentsDollar } from "@fortawesome/free-solid-svg-icons";
 import UserEvents from "./UserEvents";
+import { findIndex, indexOf } from "lodash";
 
 const Events = ({ socket }) => {
-
-
   const events = useSelector(getEvents);
+  const userEvents = useSelector(getUserEvents);
   const [receiverData, setData] = useState([]);
   const filter = useSelector(getFilter);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
     socket?.on("getNotification", (data) => {
-      dispatch(fetchUserEvents(loggedUser.user._id))
+      dispatch(fetchUserEvents(loggedUser.user._id));
       setData([...receiverData, data]);
     });
   }, [socket, receiverData]);
 
   const loggedUser = useSelector(getLoggedUserData);
 
-  const register = (id, title, eventId) => {
-
+  const register = (id, title, eventId, description) => {
     const event = {
       id: eventId,
-      userId: loggedUser.user._id
-    }
+      userId: loggedUser.user._id,
+      title: title,
+      description: description,
+    };
 
-    dispatch(registerForEvent(event))
+    dispatch(registerForEvent(event));
 
     socket.emit("sendNotification", {
       senderId: loggedUser.user._id,
@@ -63,6 +63,45 @@ const Events = ({ socket }) => {
     });
   };
 
+  const removeNotification = (title) => {
+    setData([...receiverData.filter((data) => data.title !== title)]);
+  };
+
+  const approveRegistration = (email, title, userId) => {
+    const id = receiverData.filter((item) => item.id === userId)[0].id;
+
+    let participantsArr = [];
+
+    let participants = [
+      ...userEvents.events.filter((item) => item.title === title)[0]
+        .participants,
+    ];
+
+    const object = {
+      ...participants.filter((item) => item.participant === id)[0],
+    };
+
+    object.status = "approved";
+
+    participantsArr = [
+      object,
+      ...participants.filter((item) => item.participant !== userId),
+    ];
+
+    const event = {
+      id: userEvents.events.filter((item) => item.title === title)[0]._id,
+      participants: participantsArr,
+    };
+
+    dispatch(registrationResponse(event));
+
+    console.log(participantsArr);
+    // setData([
+    //   ...receiverData.filter(
+    //     (data) => data.email !== email || data.title !== title
+    //   ),
+    // ]);
+  };
 
   return (
     <>
@@ -82,10 +121,11 @@ const Events = ({ socket }) => {
           )}
         </Grid>
 
-        {Object.keys(events).length !== 0 && (filter === "myEvents" || filter === "allEvents") ? (
+        {Object.keys(events).length !== 0 &&
+        (filter === "myEvents" || filter === "allEvents") ? (
           <Event
-            events={events.events.filter((item) =>
-              item.createdBy === loggedUser.user._id
+            events={events.events.filter(
+              (item) => item.createdBy === loggedUser.user._id
             )}
             register={register}
           />
@@ -105,9 +145,14 @@ const Events = ({ socket }) => {
             </>
           )}
         </Grid>
-        {Object.keys(events).length !== 0 && (filter === "courses" || filter === "allEvents") ? (
+        {Object.keys(events).length !== 0 &&
+        (filter === "courses" || filter === "allEvents") ? (
           <Event
-            events={events.events.filter((item) => item.category === "courses")}
+            events={events.events.filter(
+              (item) =>
+                item.category === "courses" &&
+                item.createdBy !== loggedUser.user._id
+            )}
             register={register}
           />
         ) : null}
@@ -126,26 +171,41 @@ const Events = ({ socket }) => {
             </>
           )}
         </Grid>
-        {Object.keys(events).length !== 0 && (filter === "meetups" || filter === "allEvents") ? (
+        {Object.keys(events).length !== 0 &&
+        (filter === "meetups" || filter === "allEvents") ? (
           <Event
-            events={events.events.filter((item) => item.category === "meetups")}
+            events={events.events.filter(
+              (item) =>
+                item.category === "meetups" &&
+                item.createdBy !== loggedUser.user._id
+            )}
             register={register}
           />
         ) : null}
       </Grid>
       <Dialog open={Object.keys(receiverData).length > 0 ? true : false}>
-      <Button startIcon={ <FontAwesomeIcon
-                     icon={faClose}
-                    />} 
-                    style={{marginLeft:'auto'}}/>
-        <DialogTitle>Event registration notification</DialogTitle>
+        <DialogTitle>Event registration notifications</DialogTitle>
 
         {Object.keys(receiverData).length > 0
-          ? receiverData.map((item) => {
+          ? receiverData.map((item, index) => {
               return (
                 <>
-                  <DialogContent>
-                  
+                  <DialogActions
+                    style={{
+                      marginLeft: "auto",
+                      fontSize: "240px !important",
+                    }}
+                  >
+                    <Button
+                      startIcon={<FontAwesomeIcon icon={faClose} />}
+                      style={{
+                        marginLeft: "auto",
+                        fontSize: "240px !important",
+                      }}
+                      onClick={() => removeNotification(item.title)}
+                    />
+                  </DialogActions>
+                  <DialogContent key={index}>
                     <DialogContentText>
                       {`User ${item.email} would like to register for your event `}{" "}
                       <span style={{ fontWeight: "900" }}>{item.title}</span>
@@ -162,7 +222,9 @@ const Events = ({ socket }) => {
                     <Button
                       autoFocus="autoFocus"
                       variant="contained"
-                      onClick={() => setData({})}
+                      onClick={() =>
+                        approveRegistration(item.email, item.title, item.id)
+                      }
                       fullWidth
                       style={{
                         marginLeft: "0",
@@ -177,7 +239,13 @@ const Events = ({ socket }) => {
                       color="error"
                       variant="contained"
                       autoFocus="autoFocus"
-                      onClick={() => setData({})}
+                      onClick={() => {
+                        setData([
+                          ...receiverData.filter(
+                            (data) => data.title !== item.title
+                          ),
+                        ]);
+                      }}
                       fullWidth
                       style={{
                         marginLeft: "0",
@@ -186,7 +254,7 @@ const Events = ({ socket }) => {
                         borderRadius: "0",
                       }}
                     >
-                      Cancel
+                      Reject
                     </Button>
                   </DialogActions>
                 </>

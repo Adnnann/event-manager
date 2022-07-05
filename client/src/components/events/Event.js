@@ -51,9 +51,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Event = ({ events, register }) => {
+const Event = ({ events, register, key }) => {
   const classes = useStyles();
-  const loggedUser = useSelector(getLoggedUserData)
+  const loggedUser = useSelector(getLoggedUserData);
   return (
     <Grid container spacing={1} marginTop={2} justifyContent="space-evenly">
       {Object.keys(events).length !== 0
@@ -109,23 +109,33 @@ const Event = ({ events, register }) => {
                   </Typography>
                 </CardContent>
                 <CardActions>
-              {item.createdBy !== loggedUser.user._id ?
-
-                <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    style={{
-                      textTransform: "none",
-                      fontSize: "18px",
-                      marginBottom: "10px",
-                    }}
-                    disabled={item.participants.includes(loggedUser.user._id) ? true : false}
-                    onClick={() => register(item.createdBy, item.title, item._id)}
-                  >
-                    Registration Request
-                  </Button> : null
-        }
+                  {item.createdBy !== loggedUser.user._id ? (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      style={{
+                        textTransform: "none",
+                        fontSize: "18px",
+                        marginBottom: "10px",
+                      }}
+                      disabled={
+                        item.participants.includes(loggedUser.user._id)
+                          ? true
+                          : false
+                      }
+                      onClick={() =>
+                        register(
+                          item.createdBy,
+                          item.title,
+                          item._id,
+                          item.description
+                        )
+                      }
+                    >
+                      Registration Request
+                    </Button>
+                  ) : null}
                 </CardActions>
               </Grid>
             );

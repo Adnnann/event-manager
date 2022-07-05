@@ -49,52 +49,101 @@ const UserEvents = () => {
   const classes = useStyles();
 
   return (
-    <Grid container spacing={1} marginTop={2} justifyContent="space-evenly">
-     { Object.keys(userEvents).length !== 0
-        ? userEvents.events.filter(item=>item.participants.length > 0)
-        .map((item) => {
-            return (
-              <Grid
-                item
-                xs={12}
-                md={3}
-                lg={3}
-                xl={3}
-                key={item.title}
-                style={{
-                  borderColor: "black",
-                  borderStyle: "solid",
-                  borderWidth: "1px",
-                  marginRight: "5px",
-                  paddingRight: "15px",
-                  marginBottom: "10px",
-                }}
-              >
-                <Card>
-                  <CardMedia
-                    className={classes.image}
-                    component={"img"}
-                    src={
-                      "https://media-exp1.licdn.com/dms/image/C561BAQE-51J-8KkMZg/company-background_10000/0/1548357920228?e=2147483647&v=beta&t=wrOVYN8qrGon9jILrMQv78FsyOV4IMQxr_3UjYtUREI"
-                    }
-                  ></CardMedia>
-                </Card>
-              
-                <CardContent style={{ textAlign: "left" }}>
-                <Typography
-                  variant="h5"
-                  style={{ textAlign: "left", marginTop: "10px" }}
-                >
-                  {item.title}
-                </Typography>
-                  <Typography component={"p"}>{item.description}</Typography>
-                  <Typography component={"p"}>{`Registarations: ${item.participants.length}`}</Typography>
-                </CardContent>
-              </Grid>
-            );
-          })
+    <Grid container spacing={1} marginTop={2} justifyContent="center">
+      {Object.keys(userEvents).length !== 0
+        ? userEvents.events
+            .filter((item) => item.participants.length > 0)
+            .map((item) => {
+              return item.participants.map((event) => {
+                console.log(event);
+                return (
+                  <Grid
+                    item
+                    xs={12}
+                    md={3}
+                    lg={3}
+                    xl={3}
+                    key={event.title}
+                    style={{
+                      borderColor: "black",
+                      borderStyle: "solid",
+                      borderWidth: "1px",
+                      marginRight: "5px",
+                      paddingRight: "15px",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    <Card>
+                      <CardMedia
+                        className={classes.image}
+                        component={"img"}
+                        src={
+                          "https://media-exp1.licdn.com/dms/image/C561BAQE-51J-8KkMZg/company-background_10000/0/1548357920228?e=2147483647&v=beta&t=wrOVYN8qrGon9jILrMQv78FsyOV4IMQxr_3UjYtUREI"
+                        }
+                      ></CardMedia>
+                    </Card>
+
+                    <CardContent style={{ textAlign: "left" }}>
+                      <Typography
+                        variant="h5"
+                        style={{ textAlign: "left", marginTop: "10px" }}
+                      >
+                        {`Title: ${event.title}`}
+                      </Typography>
+                      <Typography
+                        component={"p"}
+                      >{`Description: ${event.description}`}</Typography>
+                      <Typography component={"p"}>
+                        Status:{" "}
+                        <span
+                          style={{
+                            color:
+                              event.status === "pending"
+                                ? "red"
+                                : event.status === "rejected"
+                                ? "orange"
+                                : "green",
+                          }}
+                        >
+                          {event.status}
+                        </span>
+                      </Typography>
+                    </CardContent>
+                    <CardActions>
+                      <Button
+                        autoFocus="autoFocus"
+                        variant="contained"
+                        fullWidth
+                        style={{
+                          marginLeft: "0",
+                          borderTopRightRadius: "0",
+                          backgroundColor: "grey",
+                          borderRadius: "0",
+                        }}
+                      >
+                        Approve
+                      </Button>
+                      <Button
+                        color="error"
+                        variant="contained"
+                        autoFocus="autoFocus"
+                        fullWidth
+                        style={{
+                          marginLeft: "0",
+                          borderTopLeftRadius: "0",
+                          borderTopBottomRadius: "0",
+                          borderRadius: "0",
+                        }}
+                      >
+                        Reject
+                      </Button>
+                    </CardActions>
+                  </Grid>
+                );
+              });
+            })
         : null}
-        </Grid>
+    </Grid>
   );
 };
 

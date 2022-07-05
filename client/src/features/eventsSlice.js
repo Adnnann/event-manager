@@ -90,7 +90,24 @@ export const registerForEvent = createAsyncThunk(
   "events/registration",
   async (event) => {
     return await axios
-      .post(`/api/eventRegistration/`, {participant: event.userId, eventId:event.id})
+      .post(`/api/eventRegistration/`, {
+        participant: event.userId,
+        eventId: event.id,
+        title: event.title,
+        description: event.description,
+      })
+      .then((response) => response.data)
+      .catch((error) => error);
+  }
+);
+export const registrationResponse = createAsyncThunk(
+  "events/registrationResponse",
+  async (event) => {
+    return await axios
+      .post(`/api/eventRegistrationResponse`, {
+        eventId: event.id,
+        participants: event.participants,
+      })
       .then((response) => response.data)
       .catch((error) => error);
   }
@@ -109,7 +126,8 @@ const initialState = {
   events: {},
   userEvents: {},
   filter: "allEvents",
-  registration:{}
+  registration: {},
+  registrationResponse: {},
 };
 
 const eventsSlice = createSlice({
@@ -184,9 +202,12 @@ const eventsSlice = createSlice({
     [uploadImage.fulfilled]: (state, { payload }) => {
       return { ...state, uploadImage: payload };
     },
-    [registerForEvent.fulfilled]: (state, {payload}) => {
-      return {...state, registration:payload}
-    }
+    [registerForEvent.fulfilled]: (state, { payload }) => {
+      return { ...state, registration: payload };
+    },
+    [registrationResponse.fulfilled]: (state, { payload }) => {
+      return { ...state, registrationResponse: payload };
+    },
   },
 });
 
