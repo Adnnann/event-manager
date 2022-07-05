@@ -59,7 +59,9 @@ const Header = () => {
     setAnchorElUserNavigation(null);
   };
 
-  const redirectToMyRegistration = () => {};
+  const redirectToMyRegistration = () => {
+    navigate('/userEvents')
+  };
   const logout = () => {
     dispatch(signoutUser());
     dispatch(resetStore());
@@ -73,21 +75,25 @@ const Header = () => {
     "My Registration",
     smallScreen ? "Logout" : null,
   ];
-  const clickEvents = [
-    redirectToCreateEvent,
-    redirectToDashboard,
-    redirectToMyRegistration,
-    smallScreen ? logout : null,
-  ];
 
-  const filterMeetups = () => {
+  const filterAllEvents = () => {
+    dispatch(setFilter('allEvents'))
+  }
+   const filterUserEvents = () => {
+      dispatch(setFilter('myEvents'))
+   }
+   const filterCourses = () => {
+    dispatch(setFilter('courses'))
+  
+   }
+   const filterMeetups = () => {
     dispatch(setFilter("meetups"));
   };
 
   const clickEventsFilters = [
-    redirectToCreateEvent,
-    redirectToDashboard,
-    redirectToMyRegistration,
+    filterAllEvents,
+    filterUserEvents,
+    filterCourses,
     filterMeetups,
   ];
 
@@ -108,6 +114,15 @@ const Header = () => {
     setCaretPositionDown(true);
     setAnchorElUserNavigation(null);
   };
+
+  const clickEventUserNav = [
+    redirectToCreateEvent,
+    redirectToDashboard,
+    redirectToMyRegistration,
+]
+
+
+
 
   const [caretPositionDown, setCaretPositionDown] = React.useState(true);
 
@@ -141,8 +156,8 @@ const Header = () => {
           />
         </div>
         <DropdownButtons
+        clickEvents={clickEventUserNav}
           items={userNavigationItems}
-          clickEvents={handleClickUserNavigation}
           anchorEl={anchorElUserNavigation}
           setAnchorEl={setAnchorElUserNavigation}
           handleClick={handleClickUserNavigation}

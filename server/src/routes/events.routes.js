@@ -17,6 +17,10 @@ router
   .put(eventCtrl.updateEvent)
   .delete(eventCtrl.removeEvent);
 
+  router
+  .route("/api/eventRegistration")
+  .post(eventCtrl.registerForEvent)
+  
 router.param("eventId", eventCtrl.eventByID);
 
 export default router;

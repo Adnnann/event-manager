@@ -88,11 +88,11 @@ export const uploadImage = createAsyncThunk(
 );
 export const registerForEvent = createAsyncThunk(
   "events/registration",
-  async (id) => {
+  async (event) => {
     return await axios
-      .put("/events/registrations", id)
-      .then((res) => res.data)
-      .catch((err) => console.log(err));
+      .post(`/api/eventRegistration/`, {participant: event.userId, eventId:event.id})
+      .then((response) => response.data)
+      .catch((error) => error);
   }
 );
 const initialState = {
@@ -109,6 +109,7 @@ const initialState = {
   events: {},
   userEvents: {},
   filter: "allEvents",
+  registration:{}
 };
 
 const eventsSlice = createSlice({
@@ -183,6 +184,9 @@ const eventsSlice = createSlice({
     [uploadImage.fulfilled]: (state, { payload }) => {
       return { ...state, uploadImage: payload };
     },
+    [registerForEvent.fulfilled]: (state, {payload}) => {
+      return {...state, registration:payload}
+    }
   },
 });
 

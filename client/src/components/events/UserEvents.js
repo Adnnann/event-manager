@@ -49,9 +49,10 @@ const UserEvents = () => {
   const classes = useStyles();
 
   return (
-    <Grid container spacing={2} marginTop={2} justifyContent="center">
-      {Object.keys(userEvents).length !== 0
-        ? userEvents.events.map((item) => {
+    <Grid container spacing={1} marginTop={2} justifyContent="space-evenly">
+     { Object.keys(userEvents).length !== 0
+        ? userEvents.events.filter(item=>item.participants.length > 0)
+        .map((item) => {
             return (
               <Grid
                 item
@@ -78,28 +79,22 @@ const UserEvents = () => {
                     }
                   ></CardMedia>
                 </Card>
+              
+                <CardContent style={{ textAlign: "left" }}>
                 <Typography
                   variant="h5"
                   style={{ textAlign: "left", marginTop: "10px" }}
                 >
                   {item.title}
                 </Typography>
-                <CardContent style={{ textAlign: "left" }}>
                   <Typography component={"p"}>{item.description}</Typography>
+                  <Typography component={"p"}>{`Registarations: ${item.participants.length}`}</Typography>
                 </CardContent>
-                <CardActions style={{ justifyContent: "space-around" }}>
-                  <Button variant="contained" color="primary">
-                    Reserve
-                  </Button>
-                  <Button variant="contained" color="secondary">
-                    Cancel
-                  </Button>
-                </CardActions>
               </Grid>
             );
           })
         : null}
-    </Grid>
+        </Grid>
   );
 };
 

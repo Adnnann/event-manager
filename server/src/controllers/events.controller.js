@@ -58,9 +58,16 @@ const removeEvent = (req, res, next) => {
 };
 
 const registerForEvent = (req, res) => {
-  Event.findById(req.body.id).update({
-    $push: { participants: req.body.id },
-  });
+  console.log(req.body)
+
+  Event.findOneAndUpdate(
+  {_id:req.body.eventId},
+  {$push: {participants: req.body.participant}})
+    .exec((err,event)=>{
+      if(err)console.log(error)
+      return res.send({message:event})
+    });
+ 
 };
 
 const eventByID = (req, res, next, id) => {
@@ -80,5 +87,6 @@ export default {
   removeEvent,
   getEvent,
   getUserEvents,
+  registerForEvent,
   eventByID,
 };

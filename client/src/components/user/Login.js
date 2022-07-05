@@ -83,7 +83,7 @@ const Login = ({ socket }) => {
   });
 
   useEffect(() => {
-    console.log(socket);
+  
     if (loggedUser?.token) {
       dispatch(userToken());
     }

@@ -53,6 +53,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Event = ({ events, register }) => {
   const classes = useStyles();
+  const loggedUser = useSelector(getLoggedUserData)
   return (
     <Grid container spacing={1} marginTop={2} justifyContent="space-evenly">
       {Object.keys(events).length !== 0
@@ -108,7 +109,9 @@ const Event = ({ events, register }) => {
                   </Typography>
                 </CardContent>
                 <CardActions>
-                  <Button
+              {item.createdBy !== loggedUser.user._id ?
+
+                <Button
                     variant="contained"
                     color="primary"
                     fullWidth
@@ -117,10 +120,12 @@ const Event = ({ events, register }) => {
                       fontSize: "18px",
                       marginBottom: "10px",
                     }}
-                    onClick={() => register(item.createdBy, item.title)}
+                    disabled={item.participants.includes(loggedUser.user._id) ? true : false}
+                    onClick={() => register(item.createdBy, item.title, item._id)}
                   >
                     Registration Request
-                  </Button>
+                  </Button> : null
+        }
                 </CardActions>
               </Grid>
             );

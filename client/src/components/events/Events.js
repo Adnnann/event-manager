@@ -2,9 +2,12 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import {
+  fetchUserEvents,
   getEvents,
   getFilter,
   getLoggedUserData,
+  getUserEvents,
+  registerForEvent
 } from "../../features/eventsSlice";
 import {
   Grid,
@@ -21,27 +24,45 @@ import { makeStyles } from "@mui/styles";
 import { Button, CardActions, Typography } from "@mui/material";
 import DropdownButtons from "../utils/DropdownButtons";
 import Event from "./Event";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faClose
+} from "@fortawesome/free-solid-svg-icons";
+import UserEvents from "./UserEvents";
 
 const Events = ({ socket }) => {
+
+
   const events = useSelector(getEvents);
   const [receiverData, setData] = useState([]);
   const filter = useSelector(getFilter);
+  const dispatch = useDispatch()
 
   useEffect(() => {
     socket?.on("getNotification", (data) => {
+      dispatch(fetchUserEvents(loggedUser.user._id))
       setData([...receiverData, data]);
     });
   }, [socket, receiverData]);
 
   const loggedUser = useSelector(getLoggedUserData);
 
-  const register = (id, title) => {
+  const register = (id, title, eventId) => {
+
+    const event = {
+      id: eventId,
+      userId: loggedUser.user._id
+    }
+
+    dispatch(registerForEvent(event))
+
     socket.emit("sendNotification", {
       senderId: loggedUser.user._id,
       receiverId: id,
       eventTitle: title,
     });
   };
+
 
   return (
     <>
@@ -61,10 +82,10 @@ const Events = ({ socket }) => {
           )}
         </Grid>
 
-        {Object.keys(events).length !== 0 ? (
+        {Object.keys(events).length !== 0 && (filter === "myEvents" || filter === "allEvents") ? (
           <Event
             events={events.events.filter((item) =>
-              item.participants.includes(loggedUser.user._id)
+              item.createdBy === loggedUser.user._id
             )}
             register={register}
           />
@@ -84,7 +105,7 @@ const Events = ({ socket }) => {
             </>
           )}
         </Grid>
-        {Object.keys(events).length !== 0 ? (
+        {Object.keys(events).length !== 0 && (filter === "courses" || filter === "allEvents") ? (
           <Event
             events={events.events.filter((item) => item.category === "courses")}
             register={register}
@@ -105,7 +126,7 @@ const Events = ({ socket }) => {
             </>
           )}
         </Grid>
-        {Object.keys(events).length !== 0 ? (
+        {Object.keys(events).length !== 0 && (filter === "meetups" || filter === "allEvents") ? (
           <Event
             events={events.events.filter((item) => item.category === "meetups")}
             register={register}
@@ -113,6 +134,10 @@ const Events = ({ socket }) => {
         ) : null}
       </Grid>
       <Dialog open={Object.keys(receiverData).length > 0 ? true : false}>
+      <Button startIcon={ <FontAwesomeIcon
+                     icon={faClose}
+                    />} 
+                    style={{marginLeft:'auto'}}/>
         <DialogTitle>Event registration notification</DialogTitle>
 
         {Object.keys(receiverData).length > 0
@@ -120,6 +145,7 @@ const Events = ({ socket }) => {
               return (
                 <>
                   <DialogContent>
+                  
                     <DialogContentText>
                       {`User ${item.email} would like to register for your event `}{" "}
                       <span style={{ fontWeight: "900" }}>{item.title}</span>
