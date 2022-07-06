@@ -5,6 +5,7 @@ import {
   getEvents,
   getFilter,
   getLoggedUserData,
+  setEventToEdit,
 } from "../../features/eventsSlice";
 import {
   Grid,
@@ -20,6 +21,10 @@ import {
 import { makeStyles } from "@mui/styles";
 import { Button, CardActions, Typography } from "@mui/material";
 import DropdownButtons from "../utils/DropdownButtons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark, faPen } from "@fortawesome/free-solid-svg-icons";
+import { Navigate, useNavigate } from "react-router-dom";
+import EditEvent from "./EditEvent";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -51,9 +56,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Event = ({ events, register, key }) => {
+const Event = ({ events, register, userEvents }) => {
   const classes = useStyles();
   const loggedUser = useSelector(getLoggedUserData);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const editEvent = (id) => {
+    dispatch(setEventToEdit(...events.filter((item) => item._id === id)));
+    navigate("/editEvent");
+  };
+
   return (
     <Grid container spacing={1} marginTop={2} justifyContent="space-evenly">
       {Object.keys(events).length !== 0
@@ -107,29 +120,38 @@ const Event = ({ events, register, key }) => {
                   >
                     Event description: {item.description}
                   </Typography>
-                  {
-                    item.participants.length > 0 && item.participants.filter(item=>item.participant===loggedUser.user._id).length > 0 ?
-                      <Typography
+                  {item.participants.length > 0 &&
+                  item.participants.filter(
+                    (item) => item.participant === loggedUser.user._id
+                  ).length > 0 ? (
+                    <Typography
                       component={"p"}
                       style={{ wordBreak: "break-all" }}
                     >
-                      Reservation status: 
+                      Reservation status:
                       <span
-                          style={{
-                            color:
-                            item.participants.filter(item=>item.participant===loggedUser.user._id)[0].status === "pending"
-                                ? "red"
-                                : item.participants.filter(item=>item.participant===loggedUser.user._id)[0].status === "rejected"
-                                ? "orange"
-                                : "green",
-                          }}
-                        >
-                           {item.participants.filter(item=>item.participant===loggedUser.user._id)[0].status}
+                        style={{
+                          color:
+                            item.participants.filter(
+                              (item) => item.participant === loggedUser.user._id
+                            )[0].status === "pending"
+                              ? "red"
+                              : item.participants.filter(
+                                  (item) =>
+                                    item.participant === loggedUser.user._id
+                                )[0].status === "rejected"
+                              ? "orange"
+                              : "green",
+                        }}
+                      >
+                        {
+                          item.participants.filter(
+                            (item) => item.participant === loggedUser.user._id
+                          )[0].status
+                        }
                       </span>
                     </Typography>
-                  : null
-                  }
-                  
+                  ) : null}
                 </CardContent>
                 <CardActions>
                   {item.createdBy !== loggedUser.user._id ? (
@@ -143,7 +165,10 @@ const Event = ({ events, register, key }) => {
                         marginBottom: "10px",
                       }}
                       disabled={
-                        item.participants.length > 0 && item.participants.filter(item=>item.participant===loggedUser.user._id).length > 0 
+                        item.participants.length > 0 &&
+                        item.participants.filter(
+                          (item) => item.participant === loggedUser.user._id
+                        ).length > 0
                           ? true
                           : false
                       }
@@ -158,7 +183,36 @@ const Event = ({ events, register, key }) => {
                     >
                       Registration Request
                     </Button>
-                  ) : null}
+                  ) : (
+                    <>
+                      <Button
+                        variant="contained"
+                        color="info"
+                        fullWidth
+                        style={{
+                          textTransform: "none",
+                          fontSize: "24px",
+                          marginBottom: "10px",
+                        }}
+                        onClick={() => editEvent(item._id)}
+                      >
+                        Edit
+                      </Button>
+
+                      <Button
+                        variant="contained"
+                        color="warning"
+                        fullWidth
+                        style={{
+                          textTransform: "none",
+                          fontSize: "24px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        Remove
+                      </Button>
+                    </>
+                  )}
                 </CardActions>
               </Grid>
             );

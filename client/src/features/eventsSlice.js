@@ -128,6 +128,7 @@ const initialState = {
   filter: "allEvents",
   registration: {},
   registrationResponse: {},
+  eventToEdit: {},
 };
 
 const eventsSlice = createSlice({
@@ -174,10 +175,13 @@ const eventsSlice = createSlice({
       state.filter = action.payload;
     },
     clearRegistrationNotificationStatus: (state, action) => {
-      state.registration = {}
+      state.registration = {};
     },
     clearRegistrationResponseStatus: (state, action) => {
-      state.registrationResponse = {}
+      state.registrationResponse = {};
+    },
+    setEventToEdit: (state, action) => {
+      state.eventToEdit = action.payload;
     },
     //reset store state after logout or delete of account
     resetStore: () => initialState,
@@ -229,8 +233,11 @@ export const getEventData = (state) => state.events.addEvent;
 export const getFilter = (state) => state.events.filter;
 export const getCreateEventMessage = (state) => state.events.addEvent;
 export const getSignedOutUserStatus = (state) => state.events.signedOut;
-export const getRegistrationNotificationStatus = (state) => state.events.registration
-export const getRegistrationResponseStatus = (state) => state.events.registrationResponse
+export const getRegistrationNotificationStatus = (state) =>
+  state.events.registration;
+export const getRegistrationResponseStatus = (state) =>
+  state.events.registrationResponse;
+export const getEventToEdit = (state) => state.events.eventToEdit;
 
 export const {
   setSigninUserForm,
@@ -242,6 +249,7 @@ export const {
   cleanAddEventMessage,
   clearRegistrationNotificationStatus,
   clearRegistrationResponseStatus,
+  setEventToEdit,
   resetStore,
 } = eventsSlice.actions;
 

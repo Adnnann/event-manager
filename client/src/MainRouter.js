@@ -7,6 +7,7 @@ import Header from "./components/core/Header";
 import LoginOrSignup from "./components/user/LoginOrSignup";
 import AddEvent from "./components/events/AddEvent";
 import UserEvents from "./components/events/UserEvents";
+import EditEvent from "./components/events/EditEvent";
 
 function MainRouter({ socket }) {
   const loggedUser = useSelector(getLoggedUserData);
@@ -20,7 +21,11 @@ function MainRouter({ socket }) {
           element={<Dashboard socket={socket} />}
         ></Route>
         <Route path="/createEvent" element={<AddEvent />}></Route>
-        <Route path="/userEvents" element={<UserEvents />}></Route>
+        <Route
+          path="/userEvents"
+          element={<UserEvents socket={socket} />}
+        ></Route>
+        <Route path="/editEvent" element={<EditEvent />}></Route>
       </Routes>
     </Router>
   );

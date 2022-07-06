@@ -1,12 +1,14 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
-import jwtDecode from "jwt-decode";
 import {
+  clearRegistrationResponseStatus,
   fetchEvents,
-  getEvents,
+  fetchUserEvents,
+  getLoggedUserData,
+  getRegistrationResponseStatus,
   getUserEvents,
+  sendRegistrationResponse,
 } from "../../features/eventsSlice";
 import { Grid, Card, CardMedia, CardContent } from "@mui/material";
 
@@ -43,13 +45,92 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const UserEvents = () => {
+const UserEvents = ({ socket }) => {
   const userEvents = useSelector(getUserEvents);
+
+  const registrationResponseStatus = useSelector(getRegistrationResponseStatus);
   const dispatch = useDispatch();
   const classes = useStyles();
 
+  const loggedUser = useSelector(getLoggedUserData);
+
+  useEffect(() => {
+    if (registrationResponseStatus?.message) {
+      dispatch(fetchEvents());
+      dispatch(fetchUserEvents(loggedUser.user._id));
+      dispatch(clearRegistrationResponseStatus());
+    }
+  }, [registrationResponseStatus]);
+
   //add reject and approve functionalities for events where creator of event did not respond
   //buttons to be displayed only where status is pending
+  const approveRegistration = (eventId, participantId, title) => {
+    let participantsArr = [];
+
+    let participants = [
+      ...userEvents.events.filter((item) => item._id === eventId)[0]
+        .participants,
+    ];
+
+    const object = {
+      ...participants.filter((item) => item.participant === participantId)[0],
+    };
+
+    object.status = "approved";
+
+    participantsArr = [
+      object,
+      ...participants.filter((item) => item.participant !== participantId),
+    ];
+
+    const event = {
+      id: eventId,
+      participants: participantsArr,
+    };
+
+    dispatch(sendRegistrationResponse(event));
+
+    socket.emit("sendRegistrationResponse", {
+      senderId: loggedUser.user._id,
+      receiverId: participantId,
+      eventTitle: title,
+      response: "approved",
+    });
+  };
+
+  const rejectRegistration = (eventId, participantId, title) => {
+    let participantsArr = [];
+
+    let participants = [
+      ...userEvents.events.filter((item) => item._id === eventId)[0]
+        .participants,
+    ];
+
+    const object = {
+      ...participants.filter((item) => item.participant === participantId)[0],
+    };
+
+    object.status = "rejected";
+
+    participantsArr = [
+      object,
+      ...participants.filter((item) => item.participant !== participantId),
+    ];
+
+    const event = {
+      id: eventId,
+      participants: participantsArr,
+    };
+
+    dispatch(sendRegistrationResponse(event));
+
+    socket.emit("sendRegistrationResponse", {
+      senderId: loggedUser.user._id,
+      receiverId: participantId,
+      eventTitle: title,
+      response: "rejected",
+    });
+  };
 
   return (
     <Grid container spacing={1} marginTop={2} justifyContent="center">
@@ -58,7 +139,6 @@ const UserEvents = () => {
             .filter((item) => item.participants.length > 0)
             .map((item) => {
               return item.participants.map((event) => {
-                console.log(event);
                 return (
                   <Grid
                     item
@@ -66,7 +146,7 @@ const UserEvents = () => {
                     md={3}
                     lg={3}
                     xl={3}
-                    key={event.title}
+                    key={event.participant}
                     style={{
                       borderColor: "black",
                       borderStyle: "solid",
@@ -113,33 +193,51 @@ const UserEvents = () => {
                       </Typography>
                     </CardContent>
                     <CardActions>
-                      <Button
-                        autoFocus="autoFocus"
-                        variant="contained"
-                        fullWidth
-                        style={{
-                          marginLeft: "0",
-                          borderTopRightRadius: "0",
-                          backgroundColor: "grey",
-                          borderRadius: "0",
-                        }}
-                      >
-                        Approve
-                      </Button>
-                      <Button
-                        color="error"
-                        variant="contained"
-                        autoFocus="autoFocus"
-                        fullWidth
-                        style={{
-                          marginLeft: "0",
-                          borderTopLeftRadius: "0",
-                          borderTopBottomRadius: "0",
-                          borderRadius: "0",
-                        }}
-                      >
-                        Reject
-                      </Button>
+                      {event.status === "pending" && (
+                        <>
+                          <Button
+                            autoFocus="autoFocus"
+                            variant="contained"
+                            fullWidth
+                            style={{
+                              marginLeft: "0",
+                              borderTopRightRadius: "0",
+                              backgroundColor: "grey",
+                              borderRadius: "0",
+                            }}
+                            onClick={() => {
+                              approveRegistration(
+                                item._id,
+                                event.participant,
+                                item.title
+                              );
+                            }}
+                          >
+                            Approve
+                          </Button>
+                          <Button
+                            color="error"
+                            variant="contained"
+                            autoFocus="autoFocus"
+                            fullWidth
+                            style={{
+                              marginLeft: "0",
+                              borderTopLeftRadius: "0",
+                              borderTopBottomRadius: "0",
+                              borderRadius: "0",
+                            }}
+                            onClick={() =>
+                              rejectRegistration(
+                                item._id,
+                                event.participant,
+                                item.title
+                              )
+                            }
+                          >
+                            Reject
+                          </Button>
+                        </>
+                      )}
                     </CardActions>
                   </Grid>
                 );

@@ -16,18 +16,18 @@ import {
   registerForEvent,
   sendRegistrationResponse,
 } from "../../features/eventsSlice";
-import {
-  Grid,
-} from "@mui/material";
+import { Grid } from "@mui/material";
 import Event from "./Event";
 import Notifications from "./Notifications";
-import _ from 'lodash'
+import _ from "lodash";
 
 const Events = ({ socket }) => {
   const events = useSelector(getEvents);
   const userEvents = useSelector(getUserEvents);
-  const registrationNotificationStatus = useSelector(getRegistrationNotificationStatus)
-  const registrationResponseStatus = useSelector(getRegistrationResponseStatus)
+  const registrationNotificationStatus = useSelector(
+    getRegistrationNotificationStatus
+  );
+  const registrationResponseStatus = useSelector(getRegistrationResponseStatus);
   const [registrationNotification, setRegistrationNotification] = useState([]);
   const [registrationResponse, setRegistrationResponse] = useState([]);
 
@@ -35,30 +35,33 @@ const Events = ({ socket }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-
     socket?.on("getRegistrationNotification", (data) => {
       dispatch(fetchUserEvents(loggedUser.user._id));
       setRegistrationNotification([...registrationNotification, data]);
     });
-   
 
     socket?.on("getRegistrationResponse", (data) => {
-      dispatch(fetchEvents())
+      dispatch(fetchEvents());
       dispatch(fetchUserEvents(loggedUser.user._id));
       setRegistrationResponse([...registrationResponse, data]);
     });
 
-    if(registrationNotificationStatus?.message){
-      dispatch(fetchEvents())
-      dispatch(clearRegistrationNotificationStatus())
+    if (registrationNotificationStatus?.message) {
+      dispatch(fetchEvents());
+      dispatch(clearRegistrationNotificationStatus());
     }
 
-    if(registrationResponseStatus?.message){
-      dispatch(fetchUserEvents(loggedUser.user._id))
-      dispatch(clearRegistrationResponseStatus())
+    if (registrationResponseStatus?.message) {
+      dispatch(fetchUserEvents(loggedUser.user._id));
+      dispatch(clearRegistrationResponseStatus());
     }
-    
-  }, [socket, registrationNotification, registrationResponse, registrationNotificationStatus, registrationResponseStatus]);
+  }, [
+    socket,
+    registrationNotification,
+    registrationResponse,
+    registrationNotificationStatus,
+    registrationResponseStatus,
+  ]);
 
   const loggedUser = useSelector(getLoggedUserData);
 
@@ -84,7 +87,7 @@ const Events = ({ socket }) => {
       ...registrationNotification.filter(
         (data) => data.email !== email || data.title !== title
       ),
-    ])
+    ]);
   };
 
   const removeResponse = (title, email) => {
@@ -92,14 +95,12 @@ const Events = ({ socket }) => {
       ...registrationResponse.filter(
         (data) => data.email !== email || data.title !== title
       ),
-    ])
- 
+    ]);
   };
 
   const approveRegistration = (email, title, userId) => {
-
-
-    const id = registrationNotification.filter((item) => item.id === userId)[0].id;
+    const id = registrationNotification.filter((item) => item.id === userId)[0]
+      .id;
 
     let participantsArr = [];
 
@@ -130,7 +131,7 @@ const Events = ({ socket }) => {
       senderId: loggedUser.user._id,
       receiverId: id,
       eventTitle: title,
-      response: 'approved'
+      response: "approved",
     });
     setRegistrationNotification([
       ...registrationNotification.filter(
@@ -139,7 +140,47 @@ const Events = ({ socket }) => {
     ]);
   };
 
-  
+  const rejectRegistration = (email, title, userId) => {
+    const id = registrationNotification.filter((item) => item.id === userId)[0]
+      .id;
+
+    let participantsArr = [];
+
+    let participants = [
+      ...userEvents.events.filter((item) => item.title === title)[0]
+        .participants,
+    ];
+
+    const object = {
+      ...participants.filter((item) => item.participant === id)[0],
+    };
+
+    object.status = "rejected";
+
+    participantsArr = [
+      object,
+      ...participants.filter((item) => item.participant !== userId),
+    ];
+
+    const event = {
+      id: userEvents.events.filter((item) => item.title === title)[0]._id,
+      participants: participantsArr,
+    };
+
+    dispatch(sendRegistrationResponse(event));
+
+    socket.emit("sendRegistrationResponse", {
+      senderId: loggedUser.user._id,
+      receiverId: id,
+      eventTitle: title,
+      response: "rejected",
+    });
+    setRegistrationNotification([
+      ...registrationNotification.filter(
+        (data) => data.email !== email || data.title !== title
+      ),
+    ]);
+  };
 
   return (
     <>
@@ -165,6 +206,7 @@ const Events = ({ socket }) => {
             events={events.events.filter(
               (item) => item.createdBy === loggedUser.user._id
             )}
+            userEvents={true}
             register={register}
           />
         ) : null}
@@ -186,14 +228,15 @@ const Events = ({ socket }) => {
         {Object.keys(events).length !== 0 &&
         (filter === "courses" || filter === "allEvents") ? (
           <Event
-          
-            events={_.chain(events.events.filter(
-              (item) =>
-                item.category === "courses" &&
-                item.createdBy !== loggedUser.user._id
-            ))
-          .orderBy(['participants'],['desc'])
-          .value()}
+            events={_.chain(
+              events.events.filter(
+                (item) =>
+                  item.category === "courses" &&
+                  item.createdBy !== loggedUser.user._id
+              )
+            )
+              .orderBy(["participants"], ["desc"])
+              .value()}
             register={register}
           />
         ) : null}
@@ -215,43 +258,38 @@ const Events = ({ socket }) => {
         {Object.keys(events).length !== 0 &&
         (filter === "meetups" || filter === "allEvents") ? (
           <Event
-            events={
-              _.chain(events.events.filter(
-              (item) =>
-                item.category === "meetups" &&
-                item.createdBy !== loggedUser.user._id
-            ))
-          .orderBy(['participants'],['desc'])
-          .value()}
+            events={_.chain(
+              events.events.filter(
+                (item) =>
+                  item.category === "meetups" &&
+                  item.createdBy !== loggedUser.user._id
+              )
+            )
+              .orderBy(["participants"], ["desc"])
+              .value()}
             register={register}
           />
         ) : null}
       </Grid>
-      {
-        Object.keys(registrationNotification).length !== 0 ?
-          <Notifications
-            registrationArr={registrationNotification}
-            approve={approveRegistration}
-            remove={removeNotification}
-            open={Object.keys(registrationNotification).length > 0 ? true : false}
-            removeNotification={removeNotification}
-            />
-       : null
-      }
-       {
-        Object.keys(registrationResponse).length !== 0 ?
-          <Notifications
-            registrationArr={registrationResponse}
-            approve={approveRegistration}
-            remove={removeNotification}
-            open={Object.keys(registrationResponse).length > 0 ? true : false}
-            removeResponse={removeResponse}
- 
-            
-            />
-       : null
-      }
-
+      {Object.keys(registrationNotification).length !== 0 ? (
+        <Notifications
+          registrationArr={registrationNotification}
+          approve={approveRegistration}
+          remove={removeNotification}
+          open={Object.keys(registrationNotification).length > 0 ? true : false}
+          removeNotification={removeNotification}
+          reject={rejectRegistration}
+        />
+      ) : null}
+      {Object.keys(registrationResponse).length !== 0 ? (
+        <Notifications
+          registrationArr={registrationResponse}
+          approve={approveRegistration}
+          remove={removeNotification}
+          open={Object.keys(registrationResponse).length > 0 ? true : false}
+          removeResponse={removeResponse}
+        />
+      ) : null}
     </>
   );
 };
