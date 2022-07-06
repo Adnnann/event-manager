@@ -107,6 +107,29 @@ const Event = ({ events, register, key }) => {
                   >
                     Event description: {item.description}
                   </Typography>
+                  {
+                    item.participants.length > 0 && item.participants.filter(item=>item.participant===loggedUser.user._id).length > 0 ?
+                      <Typography
+                      component={"p"}
+                      style={{ wordBreak: "break-all" }}
+                    >
+                      Reservation status: 
+                      <span
+                          style={{
+                            color:
+                            item.participants.filter(item=>item.participant===loggedUser.user._id)[0].status === "pending"
+                                ? "red"
+                                : item.participants.filter(item=>item.participant===loggedUser.user._id)[0].status === "rejected"
+                                ? "orange"
+                                : "green",
+                          }}
+                        >
+                           {item.participants.filter(item=>item.participant===loggedUser.user._id)[0].status}
+                      </span>
+                    </Typography>
+                  : null
+                  }
+                  
                 </CardContent>
                 <CardActions>
                   {item.createdBy !== loggedUser.user._id ? (
@@ -120,7 +143,7 @@ const Event = ({ events, register, key }) => {
                         marginBottom: "10px",
                       }}
                       disabled={
-                        item.participants.includes(loggedUser.user._id)
+                        item.participants.length > 0 && item.participants.filter(item=>item.participant===loggedUser.user._id).length > 0 
                           ? true
                           : false
                       }

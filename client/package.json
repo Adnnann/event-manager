@@ -2,7 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://5000-adnnann-eventmanager-emaljyzpupg.ws-eu51.gitpod.io/",
+  "proxy": "https://5000-adnnann-eventmanager-wp80rlt8auj.ws-eu51.gitpod.io/",
   "dependencies": {
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",

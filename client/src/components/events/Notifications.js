@@ -10,7 +10,7 @@ import {
   import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose, faCommentsDollar } from "@fortawesome/free-solid-svg-icons";
 
-const Notifications = ({registrationArr, remove, approve, reject, open, closeNotification}) => {
+const Notifications = ({registrationArr,  approve, reject, open, removeNotification, removeResponse}) => {
 
 
 return(
@@ -34,7 +34,7 @@ return(
                   marginLeft: "auto",
                   fontSize: "240px !important",
                 }}
-                onClick={() => remove(item.title)}
+               onClick={()=>removeNotification(item.title, item.email)}
               />
           : null
         }
@@ -98,7 +98,7 @@ return(
             color="error"
             variant="contained"
             autoFocus="autoFocus"
-            onClick={closeNotification}
+            onClick={()=>removeResponse(item.title, item.email)}
             fullWidth
             style={{
               marginLeft: "0",

@@ -2,10 +2,16 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import {
+  clearRegistrationNotificationStatus,
+  clearRegistrationResponseStatus,
+  fetchEvents,
   fetchUserEvents,
   getEvents,
   getFilter,
   getLoggedUserData,
+  getRegistrationNotification,
+  getRegistrationNotificationStatus,
+  getRegistrationResponseStatus,
   getUserEvents,
   registerForEvent,
   sendRegistrationResponse,
@@ -15,32 +21,44 @@ import {
 } from "@mui/material";
 import Event from "./Event";
 import Notifications from "./Notifications";
+import _ from 'lodash'
 
 const Events = ({ socket }) => {
   const events = useSelector(getEvents);
   const userEvents = useSelector(getUserEvents);
+  const registrationNotificationStatus = useSelector(getRegistrationNotificationStatus)
+  const registrationResponseStatus = useSelector(getRegistrationResponseStatus)
   const [registrationNotification, setRegistrationNotification] = useState([]);
   const [registrationResponse, setRegistrationResponse] = useState([]);
-  const [resonseToUserEventRegistration, setResponseToUserEventRegistration] = useState("")
+
   const filter = useSelector(getFilter);
   const dispatch = useDispatch();
 
   useEffect(() => {
 
     socket?.on("getRegistrationNotification", (data) => {
-      console.log(data)
       dispatch(fetchUserEvents(loggedUser.user._id));
       setRegistrationNotification([...registrationNotification, data]);
     });
    
 
     socket?.on("getRegistrationResponse", (data) => {
-      console.log(data)
+      dispatch(fetchEvents())
       dispatch(fetchUserEvents(loggedUser.user._id));
       setRegistrationResponse([...registrationResponse, data]);
     });
-    console.log(registrationResponse)
-  }, [socket, registrationNotification, registrationResponse]);
+
+    if(registrationNotificationStatus?.message){
+      dispatch(fetchEvents())
+      dispatch(clearRegistrationNotificationStatus())
+    }
+
+    if(registrationResponseStatus?.message){
+      dispatch(fetchUserEvents(loggedUser.user._id))
+      dispatch(clearRegistrationResponseStatus())
+    }
+    
+  }, [socket, registrationNotification, registrationResponse, registrationNotificationStatus, registrationResponseStatus]);
 
   const loggedUser = useSelector(getLoggedUserData);
 
@@ -61,8 +79,21 @@ const Events = ({ socket }) => {
     });
   };
 
-  const removeNotification = (title) => {
-    setRegistrationNotification([...registrationNotification.filter((data) => data.title !== title)]);
+  const removeNotification = (title, email) => {
+    setRegistrationNotification([
+      ...registrationNotification.filter(
+        (data) => data.email !== email || data.title !== title
+      ),
+    ])
+  };
+
+  const removeResponse = (title, email) => {
+    setRegistrationResponse([
+      ...registrationResponse.filter(
+        (data) => data.email !== email || data.title !== title
+      ),
+    ])
+ 
   };
 
   const approveRegistration = (email, title, userId) => {
@@ -95,21 +126,20 @@ const Events = ({ socket }) => {
 
     dispatch(sendRegistrationResponse(event));
 
-    console.log(participantsArr);
     socket.emit("sendRegistrationResponse", {
       senderId: loggedUser.user._id,
       receiverId: id,
       eventTitle: title,
       response: 'approved'
     });
-    // setRegistrationNotification([
-    //   ...registrationNotification.filter(
-    //     (data) => data.email !== email || data.title !== title
-    //   ),
-    // ]);
+    setRegistrationNotification([
+      ...registrationNotification.filter(
+        (data) => data.email !== email || data.title !== title
+      ),
+    ]);
   };
 
-  console.log(resonseToUserEventRegistration)
+  
 
   return (
     <>
@@ -156,11 +186,14 @@ const Events = ({ socket }) => {
         {Object.keys(events).length !== 0 &&
         (filter === "courses" || filter === "allEvents") ? (
           <Event
-            events={events.events.filter(
+          
+            events={_.chain(events.events.filter(
               (item) =>
                 item.category === "courses" &&
                 item.createdBy !== loggedUser.user._id
-            )}
+            ))
+          .orderBy(['participants'],['desc'])
+          .value()}
             register={register}
           />
         ) : null}
@@ -182,11 +215,14 @@ const Events = ({ socket }) => {
         {Object.keys(events).length !== 0 &&
         (filter === "meetups" || filter === "allEvents") ? (
           <Event
-            events={events.events.filter(
+            events={
+              _.chain(events.events.filter(
               (item) =>
                 item.category === "meetups" &&
                 item.createdBy !== loggedUser.user._id
-            )}
+            ))
+          .orderBy(['participants'],['desc'])
+          .value()}
             register={register}
           />
         ) : null}
@@ -198,7 +234,7 @@ const Events = ({ socket }) => {
             approve={approveRegistration}
             remove={removeNotification}
             open={Object.keys(registrationNotification).length > 0 ? true : false}
-  
+            removeNotification={removeNotification}
             />
        : null
       }
@@ -209,6 +245,7 @@ const Events = ({ socket }) => {
             approve={approveRegistration}
             remove={removeNotification}
             open={Object.keys(registrationResponse).length > 0 ? true : false}
+            removeResponse={removeResponse}
  
             
             />

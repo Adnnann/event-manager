@@ -173,6 +173,9 @@ const eventsSlice = createSlice({
     setFilter: (state, action) => {
       state.filter = action.payload;
     },
+    clearRegistrationNotificationStatus: (state, action) => {
+      state.registration = {}
+    },
     clearRegistrationResponseStatus: (state, action) => {
       state.registrationResponse = {}
     },
@@ -226,6 +229,7 @@ export const getEventData = (state) => state.events.addEvent;
 export const getFilter = (state) => state.events.filter;
 export const getCreateEventMessage = (state) => state.events.addEvent;
 export const getSignedOutUserStatus = (state) => state.events.signedOut;
+export const getRegistrationNotificationStatus = (state) => state.events.registration
 export const getRegistrationResponseStatus = (state) => state.events.registrationResponse
 
 export const {
@@ -236,6 +240,8 @@ export const {
   cleanSignupMessage,
   cleanUploadImageStatus,
   cleanAddEventMessage,
+  clearRegistrationNotificationStatus,
+  clearRegistrationResponseStatus,
   resetStore,
 } = eventsSlice.actions;
 
