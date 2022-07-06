@@ -32,12 +32,14 @@ const Events = ({ socket }) => {
       dispatch(fetchUserEvents(loggedUser.user._id));
       setRegistrationNotification([...registrationNotification, data]);
     });
+   
 
     socket?.on("getRegistrationResponse", (data) => {
       console.log(data)
       dispatch(fetchUserEvents(loggedUser.user._id));
       setRegistrationResponse([...registrationResponse, data]);
     });
+    console.log(registrationResponse)
   }, [socket, registrationNotification, registrationResponse]);
 
   const loggedUser = useSelector(getLoggedUserData);

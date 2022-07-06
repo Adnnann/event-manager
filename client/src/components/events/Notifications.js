@@ -4,12 +4,13 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
-    Button
+    Button,
+    Typography
   } from "@mui/material";
   import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose, faCommentsDollar } from "@fortawesome/free-solid-svg-icons";
 
-const Notifications = ({registrationArr, remove, approve, reject, open}) => {
+const Notifications = ({registrationArr, remove, approve, reject, open, closeNotification}) => {
 
 
 return(
@@ -17,7 +18,7 @@ return(
 <DialogTitle>Event registration notifications</DialogTitle>
 
 { registrationArr.map((item, index) => {
-    console.log(registrationArr)
+ 
       return (
         <>
           <DialogActions
@@ -26,22 +27,28 @@ return(
               fontSize: "240px !important",
             }}
           >
+          { item.type === 'registration notification' ? 
             <Button
-              startIcon={<FontAwesomeIcon icon={faClose} />}
-              style={{
-                marginLeft: "auto",
-                fontSize: "240px !important",
-              }}
-              onClick={() => remove(item.title)}
-            />
+                startIcon={<FontAwesomeIcon icon={faClose} />}
+                style={{
+                  marginLeft: "auto",
+                  fontSize: "240px !important",
+                }}
+                onClick={() => remove(item.title)}
+              />
+          : null
+        }
           </DialogActions>
           <DialogContent key={index}>
+            <Typography variant="h5">
+            {item.title}
+            </Typography>
             <DialogContentText>
               
-              {registrationArr.type === 'registration notification' && registrationArr?.status ? 
-              `User ${item.email} ${item.status} your registration request for event`
+              {item.type === 'registration response' ? 
+             <> {`User ${item.email} `} <span style={{fontWeight:'bold'}}>{item.response}</span> {` your registration request`}</>
               : `User ${item.email} would like to register for your event`}{" "}
-              <span style={{ fontWeight: "900" }}>{item.title}</span>
+        
             </DialogContentText>
           </DialogContent>
           <DialogActions
@@ -52,6 +59,9 @@ return(
               borderBottomColor: "black",
             }}
           >
+
+            {item.type === 'registration notification' ?
+            <>
             <Button
               autoFocus="autoFocus"
               variant="contained"
@@ -83,6 +93,23 @@ return(
             >
               Reject
             </Button>
+            </>
+            : <Button
+            color="error"
+            variant="contained"
+            autoFocus="autoFocus"
+            onClick={closeNotification}
+            fullWidth
+            style={{
+              marginLeft: "0",
+              borderTopLeftRadius: "0",
+              borderTopBottomRadius: "0",
+              borderRadius: "0",
+            }}
+          >
+            Close notification
+          </Button>
+            }
           </DialogActions>
         </>
       );

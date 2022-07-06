@@ -11,6 +11,8 @@ const App = () => {
 const socketIOURI = window.location
  const socketConnetction = socketIOURI.protocol === 'https:' ? 'https://5000-adnnann-eventmanager-emaljyzpupg.ws-eu51.gitpod.io/' :  'http://localhost:5000'
 
+ console.log(window.location)
+
   const [socket, setSocket] = useState(null);
   useEffect(() => {
     setSocket(io(socketConnetction));
