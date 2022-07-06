@@ -48,6 +48,9 @@ const UserEvents = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
 
+  //add reject and approve functionalities for events where creator of event did not respond
+  //buttons to be displayed only where status is pending
+
   return (
     <Grid container spacing={1} marginTop={2} justifyContent="center">
       {Object.keys(userEvents).length !== 0
