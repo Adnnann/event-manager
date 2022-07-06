@@ -42,13 +42,25 @@ io.on("connection", (socket) => {
     getUser(id);
   });
 
-  socket.on("sendNotification", ({ senderId, receiverId, eventTitle }) => {
+  socket.on("sendRegistrationNotification", ({ senderId, receiverId, eventTitle }) => {
     const receiver = getUser(receiverId);
     const sender = getUser(senderId);
     if (receiver.length > 0) {
       const senderObject = sender[0];
       senderObject.title = eventTitle;
-      io.to(receiver[0].socketId).emit("getNotification", sender[0]);
+      senderObject.type = 'registration notification'
+      io.to(receiver[0].socketId).emit("getRegistrationNotification", sender[0]);
+    }
+  });
+  socket.on("sendRegistrationResponse", ({ senderId, receiverId, eventTitle, response }) => {
+    const receiver = getUser(receiverId);
+    const sender = getUser(senderId);
+    if (receiver.length > 0) {
+      const senderObject = sender[0];
+      senderObject.title = eventTitle;
+      senderObject.type = 'registration response'
+      senderObject.response = response
+      io.to(receiver[0].socketId).emit("getRegistrationResponse", sender[0]);
     }
   });
   socket.on("disconnect", () => {

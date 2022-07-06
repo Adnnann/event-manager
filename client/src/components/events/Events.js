@@ -8,41 +8,37 @@ import {
   getLoggedUserData,
   getUserEvents,
   registerForEvent,
-  registrationResponse,
+  sendRegistrationResponse,
 } from "../../features/eventsSlice";
 import {
   Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
 } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import { Button, CardActions, Typography } from "@mui/material";
-import DropdownButtons from "../utils/DropdownButtons";
 import Event from "./Event";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClose, faCommentsDollar } from "@fortawesome/free-solid-svg-icons";
-import UserEvents from "./UserEvents";
-import { findIndex, indexOf } from "lodash";
+import Notifications from "./Notifications";
 
 const Events = ({ socket }) => {
   const events = useSelector(getEvents);
   const userEvents = useSelector(getUserEvents);
-  const [receiverData, setData] = useState([]);
+  const [registrationNotification, setRegistrationNotification] = useState([]);
+  const [registrationResponse, setRegistrationResponse] = useState([]);
+  const [resonseToUserEventRegistration, setResponseToUserEventRegistration] = useState("")
   const filter = useSelector(getFilter);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    socket?.on("getNotification", (data) => {
+
+    socket?.on("getRegistrationNotification", (data) => {
+      console.log(data)
       dispatch(fetchUserEvents(loggedUser.user._id));
-      setData([...receiverData, data]);
+      setRegistrationNotification([...registrationNotification, data]);
     });
-  }, [socket, receiverData]);
+
+    socket?.on("getRegistrationResponse", (data) => {
+      console.log(data)
+      dispatch(fetchUserEvents(loggedUser.user._id));
+      setRegistrationResponse([...registrationResponse, data]);
+    });
+  }, [socket, registrationNotification, registrationResponse]);
 
   const loggedUser = useSelector(getLoggedUserData);
 
@@ -56,7 +52,7 @@ const Events = ({ socket }) => {
 
     dispatch(registerForEvent(event));
 
-    socket.emit("sendNotification", {
+    socket.emit("sendRegistrationNotification", {
       senderId: loggedUser.user._id,
       receiverId: id,
       eventTitle: title,
@@ -64,11 +60,13 @@ const Events = ({ socket }) => {
   };
 
   const removeNotification = (title) => {
-    setData([...receiverData.filter((data) => data.title !== title)]);
+    setRegistrationNotification([...registrationNotification.filter((data) => data.title !== title)]);
   };
 
   const approveRegistration = (email, title, userId) => {
-    const id = receiverData.filter((item) => item.id === userId)[0].id;
+
+
+    const id = registrationNotification.filter((item) => item.id === userId)[0].id;
 
     let participantsArr = [];
 
@@ -93,15 +91,23 @@ const Events = ({ socket }) => {
       participants: participantsArr,
     };
 
-    dispatch(registrationResponse(event));
+    dispatch(sendRegistrationResponse(event));
 
     console.log(participantsArr);
-    // setData([
-    //   ...receiverData.filter(
+    socket.emit("sendRegistrationResponse", {
+      senderId: loggedUser.user._id,
+      receiverId: id,
+      eventTitle: title,
+      response: 'approved'
+    });
+    // setRegistrationNotification([
+    //   ...registrationNotification.filter(
     //     (data) => data.email !== email || data.title !== title
     //   ),
     // ]);
   };
+
+  console.log(resonseToUserEventRegistration)
 
   return (
     <>
@@ -183,85 +189,30 @@ const Events = ({ socket }) => {
           />
         ) : null}
       </Grid>
-      <Dialog open={Object.keys(receiverData).length > 0 ? true : false}>
-        <DialogTitle>Event registration notifications</DialogTitle>
+      {
+        Object.keys(registrationNotification).length !== 0 ?
+          <Notifications
+            registrationArr={registrationNotification}
+            approve={approveRegistration}
+            remove={removeNotification}
+            open={Object.keys(registrationNotification).length > 0 ? true : false}
+  
+            />
+       : null
+      }
+       {
+        Object.keys(registrationResponse).length !== 0 ?
+          <Notifications
+            registrationArr={registrationResponse}
+            approve={approveRegistration}
+            remove={removeNotification}
+            open={Object.keys(registrationResponse).length > 0 ? true : false}
+ 
+            
+            />
+       : null
+      }
 
-        {Object.keys(receiverData).length > 0
-          ? receiverData.map((item, index) => {
-              return (
-                <>
-                  <DialogActions
-                    style={{
-                      marginLeft: "auto",
-                      fontSize: "240px !important",
-                    }}
-                  >
-                    <Button
-                      startIcon={<FontAwesomeIcon icon={faClose} />}
-                      style={{
-                        marginLeft: "auto",
-                        fontSize: "240px !important",
-                      }}
-                      onClick={() => removeNotification(item.title)}
-                    />
-                  </DialogActions>
-                  <DialogContent key={index}>
-                    <DialogContentText>
-                      {`User ${item.email} would like to register for your event `}{" "}
-                      <span style={{ fontWeight: "900" }}>{item.title}</span>
-                    </DialogContentText>
-                  </DialogContent>
-                  <DialogActions
-                    style={{
-                      justifyContent: "space-around",
-                      borderBottomStyle: "solid",
-                      borderBottomWidth: "1px",
-                      borderBottomColor: "black",
-                    }}
-                  >
-                    <Button
-                      autoFocus="autoFocus"
-                      variant="contained"
-                      onClick={() =>
-                        approveRegistration(item.email, item.title, item.id)
-                      }
-                      fullWidth
-                      style={{
-                        marginLeft: "0",
-                        borderTopRightRadius: "0",
-                        backgroundColor: "grey",
-                        borderRadius: "0",
-                      }}
-                    >
-                      Approve
-                    </Button>
-                    <Button
-                      color="error"
-                      variant="contained"
-                      autoFocus="autoFocus"
-                      onClick={() => {
-                        setData([
-                          ...receiverData.filter(
-                            (data) => data.title !== item.title
-                          ),
-                        ]);
-                      }}
-                      fullWidth
-                      style={{
-                        marginLeft: "0",
-                        borderTopLeftRadius: "0",
-                        borderTopBottomRadius: "0",
-                        borderRadius: "0",
-                      }}
-                    >
-                      Reject
-                    </Button>
-                  </DialogActions>
-                </>
-              );
-            })
-          : null}
-      </Dialog>
     </>
   );
 };

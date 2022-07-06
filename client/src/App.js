@@ -9,7 +9,7 @@ import { io } from "socket.io-client";
 const App = () => {
 //to enable usage of gitpod
 const socketIOURI = window.location
- const socketConnetction = socketIOURI.protocol === 'https:' ? 'https://5000-adnnann-eventmanager-04k1g5npukn.ws-eu51.gitpod.io' :  'http://localhost:5000'
+ const socketConnetction = socketIOURI.protocol === 'https:' ? 'https://5000-adnnann-eventmanager-emaljyzpupg.ws-eu51.gitpod.io/' :  'http://localhost:5000'
 
   const [socket, setSocket] = useState(null);
   useEffect(() => {

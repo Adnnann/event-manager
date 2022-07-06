@@ -1,16 +1,15 @@
-
-
 {
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:5000",
+  "proxy": "https://5000-adnnann-eventmanager-emaljyzpupg.ws-eu51.gitpod.io/",
   "dependencies": {
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.1.18",
+    "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.8.6",
     "@mui/styles": "^5.8.6",
     "@reduxjs/toolkit": "^1.8.1",

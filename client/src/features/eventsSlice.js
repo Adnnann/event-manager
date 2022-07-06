@@ -100,7 +100,7 @@ export const registerForEvent = createAsyncThunk(
       .catch((error) => error);
   }
 );
-export const registrationResponse = createAsyncThunk(
+export const sendRegistrationResponse = createAsyncThunk(
   "events/registrationResponse",
   async (event) => {
     return await axios
@@ -173,6 +173,9 @@ const eventsSlice = createSlice({
     setFilter: (state, action) => {
       state.filter = action.payload;
     },
+    clearRegistrationResponseStatus: (state, action) => {
+      state.registrationResponse = {}
+    },
     //reset store state after logout or delete of account
     resetStore: () => initialState,
   },
@@ -205,7 +208,7 @@ const eventsSlice = createSlice({
     [registerForEvent.fulfilled]: (state, { payload }) => {
       return { ...state, registration: payload };
     },
-    [registrationResponse.fulfilled]: (state, { payload }) => {
+    [sendRegistrationResponse.fulfilled]: (state, { payload }) => {
       return { ...state, registrationResponse: payload };
     },
   },
@@ -223,6 +226,7 @@ export const getEventData = (state) => state.events.addEvent;
 export const getFilter = (state) => state.events.filter;
 export const getCreateEventMessage = (state) => state.events.addEvent;
 export const getSignedOutUserStatus = (state) => state.events.signedOut;
+export const getRegistrationResponseStatus = (state) => state.events.registrationResponse
 
 export const {
   setSigninUserForm,
