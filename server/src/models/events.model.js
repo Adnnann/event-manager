@@ -15,12 +15,13 @@ const EventsSchema = new mongoose.Schema({
   price: {
     type: String,
     required: "Course level is required!",
+    match: [/^[0-9]*$/, "Price must be a number"],
   },
   date: {
     type: Date,
     required: "Date of event is required!",
   },
-  courseImage: {
+  eventImage: {
     type: String,
   },
   createdBy: {
@@ -29,6 +30,7 @@ const EventsSchema = new mongoose.Schema({
   },
   status: {
     type: String,
+    default: "active",
   },
   category: {
     type: String,

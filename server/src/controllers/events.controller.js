@@ -39,7 +39,7 @@ const updateEvent = (req, res, next) => {
   let event = req.event;
   event = _.extend(event, req.body);
   event.updated = Date.now();
-  Event.save((err) => {
+  event.save((err) => {
     if (err) {
       return res.send({ error: dbErrorHandlers.getErrorMessage(err) });
     }
@@ -86,6 +86,15 @@ const registrationResponse = (req, res) => {
   });
 };
 
+const cancelEvent = (req, res) => {
+  Event.findOneAndUpdate({ _id: req.body.id }, { status: "canceled" }).exec(
+    (err, event) => {
+      if (err) return res.send({ error: dbErrorHandlers.getErrorMessage(err) });
+      return res.send({ message: "Event canceled" });
+    }
+  );
+};
+
 const eventByID = (req, res, next, id) => {
   Event.findById(id).exec((err, event) => {
     if (err || !event) {
@@ -105,5 +114,6 @@ export default {
   getUserEvents,
   registerForEvent,
   registrationResponse,
+  cancelEvent,
   eventByID,
 };

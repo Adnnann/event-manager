@@ -1,12 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
-import {
-  getEvents,
-  getFilter,
-  getLoggedUserData,
-  setEventToEdit,
-} from "../../features/eventsSlice";
+import { getLoggedUserData, setEventToEdit } from "../../features/eventsSlice";
 import {
   Grid,
   Card,
@@ -56,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Event = ({ events, register, userEvents }) => {
+const Event = ({ events, register, userEvents, cancel }) => {
   const classes = useStyles();
   const loggedUser = useSelector(getLoggedUserData);
   const navigate = useNavigate();
@@ -92,16 +87,20 @@ const Event = ({ events, register, userEvents }) => {
                   <CardMedia
                     className={classes.image}
                     component={"img"}
-                    src={
-                      "https://media-exp1.licdn.com/dms/image/C561BAQE-51J-8KkMZg/company-background_10000/0/1548357920228?e=2147483647&v=beta&t=wrOVYN8qrGon9jILrMQv78FsyOV4IMQxr_3UjYtUREI"
-                    }
+                    src={item.eventImage}
                   ></CardMedia>
                 </Card>
 
                 <CardContent style={{ textAlign: "left" }}>
                   <Typography
                     variant="h5"
-                    style={{ textAlign: "left", marginTop: "10px" }}
+                    style={{
+                      textAlign: "left",
+                      marginTop: "10px",
+                      textDecoration:
+                        item.status === "canceled" ? "line-through" : "none",
+                      color: item.status === "canceled" ? "red" : "black",
+                    }}
                   >
                     {item.title}
                   </Typography>
@@ -120,6 +119,13 @@ const Event = ({ events, register, userEvents }) => {
                   >
                     Event description: {item.description}
                   </Typography>
+                  {item?.updated && (
+                    <Typography component={"p"} color="green">
+                      {`Event updated at ${moment(item.updated).format(
+                        "L HH:MM"
+                      )}`}
+                    </Typography>
+                  )}
                   {item.participants.length > 0 &&
                   item.participants.filter(
                     (item) => item.participant === loggedUser.user._id
@@ -154,7 +160,8 @@ const Event = ({ events, register, userEvents }) => {
                   ) : null}
                 </CardContent>
                 <CardActions>
-                  {item.createdBy !== loggedUser.user._id ? (
+                  {item.createdBy !== loggedUser.user._id &&
+                  item.status !== "canceled" ? (
                     <Button
                       variant="contained"
                       color="primary"
@@ -183,7 +190,7 @@ const Event = ({ events, register, userEvents }) => {
                     >
                       Registration Request
                     </Button>
-                  ) : (
+                  ) : item.status !== "canceled" ? (
                     <>
                       <Button
                         variant="contained"
@@ -191,7 +198,7 @@ const Event = ({ events, register, userEvents }) => {
                         fullWidth
                         style={{
                           textTransform: "none",
-                          fontSize: "24px",
+                          fontSize: "18px",
                           marginBottom: "10px",
                         }}
                         onClick={() => editEvent(item._id)}
@@ -203,15 +210,20 @@ const Event = ({ events, register, userEvents }) => {
                         variant="contained"
                         color="warning"
                         fullWidth
+                        onClick={() => cancel(item._id)}
                         style={{
                           textTransform: "none",
-                          fontSize: "24px",
+                          fontSize: "18px",
                           marginBottom: "10px",
                         }}
                       >
                         Remove
                       </Button>
                     </>
+                  ) : (
+                    <Typography variant="h5" color="red">
+                      Event canceled
+                    </Typography>
                   )}
                 </CardActions>
               </Grid>

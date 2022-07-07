@@ -14,6 +14,10 @@ import {
   fetchEvents,
   getCreateEventMessage,
   getEventToEdit,
+  fetchUserEvents,
+  getUpdateEventStatus,
+  cleanUpdateEventStatus,
+  updateEvent,
 } from "../../features/eventsSlice";
 import { Button, Card, CardMedia, Grid, TextField } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
@@ -85,10 +89,11 @@ const useStyles = makeStyles((theme) => ({
   error: { color: "red" },
 }));
 
-const EditEvent = () => {
+const EditEvent = ({ socket }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const eventToEdit = useSelector(getEventToEdit);
+  const updateEventStatus = useSelector(getUpdateEventStatus);
 
   const uploadImageStatus = useSelector(getUploadUserImageStatus);
   const loggedUser = useSelector(getLoggedUserData);
@@ -113,7 +118,30 @@ const EditEvent = () => {
       category: eventToEdit.category,
       error: "",
     });
-  }, []);
+
+    socket?.on("getUpdatedEventNotification", () => {
+      dispatch(fetchEvents());
+      dispatch(fetchUserEvents(loggedUser.user._id));
+    });
+
+    if (updateEventStatus?.message) {
+      socket.emit("updateEvent");
+      dispatch(fetchUserEvents(loggedUser.user._id));
+      dispatch(fetchEvents());
+      dispatch(cleanUpdateEventStatus());
+
+      setValues({
+        title: "",
+        description: "",
+        price: "",
+        date: "",
+        category: "",
+        error: "",
+      });
+      dispatch(cleanUploadImageStatus());
+      navigate("/dashboard");
+    }
+  }, [updateEventStatus]);
 
   const handleChange = (name) => (event) => {
     const eventToAdd = {
@@ -144,11 +172,20 @@ const EditEvent = () => {
 
   const clickSubmit = () => {
     const event = {
-      createdBy: loggedUser.user._id,
-      ...values,
+      param: eventToEdit._id,
+      data: {
+        title: values.title,
+        description: values.description,
+        price: values.price,
+        date: values.date,
+        category: values.category,
+        eventImage: uploadImageStatus?.imageUrl
+          ? uploadImageStatus.imageUrl
+          : "",
+      },
     };
 
-    dispatch(createEvent(event));
+    dispatch(updateEvent(event));
   };
 
   const cancel = () => {
@@ -165,7 +202,7 @@ const EditEvent = () => {
     formData.append(
       "userImage",
       event.target.files[0],
-      `eventImage${loggedUser.courseNum}-${Date.now()}.${
+      `${eventToEdit.title.replace(/\s+/g, "")}-${Date.now()}.${
         event.target.files[0].name.split(".")[1]
       }`
     );
@@ -177,14 +214,17 @@ const EditEvent = () => {
       {/* {addEventStatus?.error || values.error ? (
         <p className={classes.error}>{addEventStatus.error || values.error}</p>
       ) : null} */}
-      <h2 className={classes.addEventTitle}>Create your Event</h2>
+      <h2 className={classes.addEventTitle}>Edit Event</h2>
       <p>Upload photo</p>
       <CardMedia
-        onClick={() => console.log("clicked")}
+        onClick={uploadPhoto}
         className={classes.userImagePlaceholder}
+        style={{ width: "260px" }}
         src={
           uploadImageStatus?.message
             ? uploadImageStatus.imageUrl
+            : eventToEdit?.eventImage && eventToEdit.eventImage !== ""
+            ? eventToEdit.eventImage
             : ImagePlaceholder
         }
         component="img"

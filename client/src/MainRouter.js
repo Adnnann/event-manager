@@ -25,7 +25,10 @@ function MainRouter({ socket }) {
           path="/userEvents"
           element={<UserEvents socket={socket} />}
         ></Route>
-        <Route path="/editEvent" element={<EditEvent />}></Route>
+        <Route
+          path="/editEvent"
+          element={<EditEvent socket={socket} />}
+        ></Route>
       </Routes>
     </Router>
   );

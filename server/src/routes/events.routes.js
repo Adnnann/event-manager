@@ -23,6 +23,8 @@ router
   .route("/api/eventRegistrationResponse")
   .post(eventCtrl.registrationResponse);
 
+router.route("/api/cancelEvent").post(eventCtrl.cancelEvent);
+
 router.param("eventId", eventCtrl.eventByID);
 
 export default router;

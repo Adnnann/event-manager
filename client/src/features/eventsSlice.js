@@ -112,6 +112,32 @@ export const sendRegistrationResponse = createAsyncThunk(
       .catch((error) => error);
   }
 );
+
+export const cancelEvent = createAsyncThunk(
+  "events/cancelEvent",
+  async (id) => {
+    return await axios
+      .post(`api/cancelEvent`, {
+        id: id,
+      })
+      .then((response) => response.data)
+      .catch((error) => error);
+  }
+);
+export const updateEvent = createAsyncThunk(
+  "events/updateEvent",
+  async (event) => {
+    return await axios
+      .put(`/api/event/${event.param}`, event.data, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => response.data)
+      .catch((error) => error);
+  }
+);
 const initialState = {
   singinUserForm: true,
   singupUserForm: false,
@@ -129,6 +155,8 @@ const initialState = {
   registration: {},
   registrationResponse: {},
   eventToEdit: {},
+  canceledEvent: {},
+  updateEvent: {},
 };
 
 const eventsSlice = createSlice({
@@ -183,6 +211,12 @@ const eventsSlice = createSlice({
     setEventToEdit: (state, action) => {
       state.eventToEdit = action.payload;
     },
+    cleanCanceledEventStatus: (state, action) => {
+      state.canceledEvent = {};
+    },
+    cleanUpdateEventStatus: (state, action) => {
+      state.updateEvent = {};
+    },
     //reset store state after logout or delete of account
     resetStore: () => initialState,
   },
@@ -218,6 +252,12 @@ const eventsSlice = createSlice({
     [sendRegistrationResponse.fulfilled]: (state, { payload }) => {
       return { ...state, registrationResponse: payload };
     },
+    [cancelEvent.fulfilled]: (state, { payload }) => {
+      return { ...state, canceledEvent: payload };
+    },
+    [updateEvent.fulfilled]: (state, { payload }) => {
+      return { ...state, updateEvent: payload };
+    },
   },
 });
 
@@ -238,6 +278,8 @@ export const getRegistrationNotificationStatus = (state) =>
 export const getRegistrationResponseStatus = (state) =>
   state.events.registrationResponse;
 export const getEventToEdit = (state) => state.events.eventToEdit;
+export const getCanceledEvent = (state) => state.events.canceledEvent;
+export const getUpdateEventStatus = (state) => state.events.updateEvent;
 
 export const {
   setSigninUserForm,
@@ -250,6 +292,8 @@ export const {
   clearRegistrationNotificationStatus,
   clearRegistrationResponseStatus,
   setEventToEdit,
+  cleanCanceledEventStatus,
+  cleanUpdateEventStatus,
   resetStore,
 } = eventsSlice.actions;
 

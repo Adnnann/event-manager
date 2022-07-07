@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "50%",
     [theme.breakpoints.only("xs")]: {
       margin: "0 auto",
+      maxWidth: 150,
     },
   },
   headerContainer: {
@@ -60,7 +61,7 @@ const Header = () => {
   };
 
   const redirectToMyRegistration = () => {
-    navigate('/userEvents')
+    navigate("/userEvents");
   };
   const logout = () => {
     dispatch(signoutUser());
@@ -77,16 +78,15 @@ const Header = () => {
   ];
 
   const filterAllEvents = () => {
-    dispatch(setFilter('allEvents'))
-  }
-   const filterUserEvents = () => {
-      dispatch(setFilter('myEvents'))
-   }
-   const filterCourses = () => {
-    dispatch(setFilter('courses'))
-  
-   }
-   const filterMeetups = () => {
+    dispatch(setFilter("allEvents"));
+  };
+  const filterUserEvents = () => {
+    dispatch(setFilter("myEvents"));
+  };
+  const filterCourses = () => {
+    dispatch(setFilter("courses"));
+  };
+  const filterMeetups = () => {
     dispatch(setFilter("meetups"));
   };
 
@@ -98,20 +98,20 @@ const Header = () => {
   ];
 
   const handleClickFilter = (event) => {
-    setCaretPositionDown(!caretPositionDown);
+    setCaretPositionDownFilter(!caretPositionDownNav);
     setAnchorElFilter(event.currentTarget);
   };
   const handleCloseFilter = () => {
-    setCaretPositionDown(true);
+    setCaretPositionDownFilter(true);
     setAnchorElFilter(null);
   };
 
   const handleClickUserNavigation = (event) => {
-    setCaretPositionDown(!caretPositionDown);
+    setCaretPositionDownNav(!caretPositionDownNav);
     setAnchorElUserNavigation(event.currentTarget);
   };
   const handleCloseUserNavigation = () => {
-    setCaretPositionDown(true);
+    setCaretPositionDownNav(true);
     setAnchorElUserNavigation(null);
   };
 
@@ -119,12 +119,11 @@ const Header = () => {
     redirectToCreateEvent,
     redirectToDashboard,
     redirectToMyRegistration,
-]
+  ];
 
-
-
-
-  const [caretPositionDown, setCaretPositionDown] = React.useState(true);
+  const [caretPositionDownFilter, setCaretPositionDownFilter] =
+    React.useState(true);
+  const [caretPositionDownNav, setCaretPositionDownNav] = React.useState(true);
 
   return (
     <AppBar position="static" className={classes.headerContainer}>
@@ -148,7 +147,7 @@ const Header = () => {
             open={openFilters}
             icon={
               <FontAwesomeIcon
-                icon={caretPositionDown ? faCaretDown : faCaretUp}
+                icon={caretPositionDownFilter ? faCaretDown : faCaretUp}
               />
             }
             handleClose={handleCloseFilter}
@@ -156,7 +155,7 @@ const Header = () => {
           />
         </div>
         <DropdownButtons
-        clickEvents={clickEventUserNav}
+          clickEvents={clickEventUserNav}
           items={userNavigationItems}
           anchorEl={anchorElUserNavigation}
           setAnchorEl={setAnchorElUserNavigation}
@@ -165,10 +164,14 @@ const Header = () => {
           startIcon={
             smallScreen ? (
               <FontAwesomeIcon icon={faBars} style={{ fontSize: "30px" }} />
-            ) : null
+            ) : (
+              <FontAwesomeIcon
+                icon={caretPositionDownNav ? faCaretDown : faCaretUp}
+              />
+            )
           }
           handleClose={handleCloseUserNavigation}
-          buttonText={smallScreen ? null : "Dashboard"}
+          buttonText={smallScreen ? null : "User navigation"}
         />
         {smallScreen ? null : (
           <Button

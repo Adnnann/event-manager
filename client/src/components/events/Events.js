@@ -2,16 +2,21 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import {
+  cancelEvent,
+  cleanCanceledEventStatus,
+  cleanUpdateEventStatus,
   clearRegistrationNotificationStatus,
   clearRegistrationResponseStatus,
   fetchEvents,
   fetchUserEvents,
+  getCanceledEvent,
   getEvents,
   getFilter,
   getLoggedUserData,
   getRegistrationNotification,
   getRegistrationNotificationStatus,
   getRegistrationResponseStatus,
+  getUpdateEventStatus,
   getUserEvents,
   registerForEvent,
   sendRegistrationResponse,
@@ -24,6 +29,8 @@ import _ from "lodash";
 const Events = ({ socket }) => {
   const events = useSelector(getEvents);
   const userEvents = useSelector(getUserEvents);
+  const cancelEventStatus = useSelector(getCanceledEvent);
+
   const registrationNotificationStatus = useSelector(
     getRegistrationNotificationStatus
   );
@@ -45,6 +52,10 @@ const Events = ({ socket }) => {
       dispatch(fetchUserEvents(loggedUser.user._id));
       setRegistrationResponse([...registrationResponse, data]);
     });
+    socket?.on("getCanceledEventNotification", () => {
+      dispatch(fetchEvents());
+      dispatch(fetchUserEvents(loggedUser.user._id));
+    });
 
     if (registrationNotificationStatus?.message) {
       dispatch(fetchEvents());
@@ -55,12 +66,19 @@ const Events = ({ socket }) => {
       dispatch(fetchUserEvents(loggedUser.user._id));
       dispatch(clearRegistrationResponseStatus());
     }
+
+    if (cancelEventStatus?.message) {
+      dispatch(fetchUserEvents(loggedUser.user._id));
+      dispatch(fetchEvents());
+      dispatch(cleanCanceledEventStatus());
+    }
   }, [
     socket,
     registrationNotification,
     registrationResponse,
     registrationNotificationStatus,
     registrationResponseStatus,
+    cancelEventStatus,
   ]);
 
   const loggedUser = useSelector(getLoggedUserData);
@@ -182,6 +200,10 @@ const Events = ({ socket }) => {
     ]);
   };
 
+  const cancel = (id) => {
+    dispatch(cancelEvent(id));
+    socket.emit("cancelEvent");
+  };
   return (
     <>
       <Grid container spacing={1} marginTop={2} justifyContent="space-evenly">
@@ -208,6 +230,7 @@ const Events = ({ socket }) => {
             )}
             userEvents={true}
             register={register}
+            cancel={cancel}
           />
         ) : null}
 

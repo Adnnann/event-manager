@@ -71,6 +71,8 @@ const createEvents = async () => {
   for (let i = 0; i < 100; i++) {
     events.push({
       title: `Event ${i}`,
+      eventImage:
+        "https://media-exp1.licdn.com/dms/image/C561BAQE-51J-8KkMZg/company-background_10000/0/1548357920228?e=2147483647&v=beta&t=wrOVYN8qrGon9jILrMQv78FsyOV4IMQxr_3UjYtUREI",
       description: `Event ${i} description`,
       category: categories[Math.floor(Math.random() * categories.length)],
       date: new Date(),

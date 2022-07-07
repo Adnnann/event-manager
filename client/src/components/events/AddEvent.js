@@ -13,6 +13,7 @@ import {
   createEvent,
   fetchEvents,
   getCreateEventMessage,
+  getEventToEdit,
 } from "../../features/eventsSlice";
 import { Button, Card, CardMedia, Grid } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
@@ -101,6 +102,7 @@ const AddEvent = () => {
     if (addEventStatus?.message) {
       dispatch(fetchEvents());
       dispatch(cleanAddEventMessage());
+      dispatch(cleanUploadImageStatus());
       navigate("/dashboard");
     }
   }, [addEventStatus, token, loggedUser]);
@@ -125,7 +127,7 @@ const AddEvent = () => {
   };
 
   const types = ["text", "text", "text", "date"];
-  const categories = ["Beginner Level", "Intermediate Level", "Advanced Level"];
+  const categories = ["courses", "meetups"];
   const labels = ["Title", "Event description", "Event price", "Event date"];
   const textFields = ["title", "description", "price", "date"];
   const placeholder = [
@@ -138,6 +140,7 @@ const AddEvent = () => {
   const clickSubmit = () => {
     const event = {
       createdBy: loggedUser.user._id,
+      eventImage: uploadImageStatus?.imageUrl ? uploadImageStatus.imageUrl : "",
       ...values,
     };
 
@@ -173,7 +176,7 @@ const AddEvent = () => {
       <h2 className={classes.addEventTitle}>Create your Event</h2>
       <p>Upload photo</p>
       <CardMedia
-        onClick={() => console.log("clicked")}
+        onClick={uploadPhoto}
         className={classes.userImagePlaceholder}
         src={
           uploadImageStatus?.message
