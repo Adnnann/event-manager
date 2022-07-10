@@ -2,7 +2,6 @@ import multer from "multer";
 import express from "express";
 import fs from "file-system";
 import imageCtrl from "../controllers/user.image.controller";
-import authCtrl from "../controllers/auth.controller";
 
 const storageUserImage = multer.diskStorage({
   destination: (req, file, callback) => {

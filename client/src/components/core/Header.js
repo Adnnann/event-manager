@@ -1,25 +1,18 @@
-import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, AppBar, Toolbar, ButtonGroup, Button } from "@mui/material";
-import eventManagerAppLogo from "../../assets/eventManagerImg.jpeg";
-import { makeStyles } from "@mui/styles";
-import DropdownButtons from "../utils/DropdownButtons";
+import { useDispatch } from "react-redux";
+import { resetStore, setFilter, signoutUser } from "../../features/eventsSlice";
+import { Box, AppBar, Toolbar, Button, useMediaQuery } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
   faCaretDown,
   faCaretUp,
 } from "@fortawesome/free-solid-svg-icons";
-import { useMediaQuery } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import theme from "../../theme";
-import {
-  resetStore,
-  setFilter,
-  signinUser,
-  signoutUser,
-} from "../../features/eventsSlice";
-import { useDispatch } from "react-redux";
+import eventManagerAppLogo from "../../assets/eventManagerImg.jpeg";
+import DropdownButtons from "../utils/DropdownButtons";
 
 const useStyles = makeStyles((theme) => ({
   logo: {
@@ -121,9 +114,8 @@ const Header = () => {
     redirectToMyRegistration,
   ];
 
-  const [caretPositionDownFilter, setCaretPositionDownFilter] =
-    React.useState(true);
-  const [caretPositionDownNav, setCaretPositionDownNav] = React.useState(true);
+  const [caretPositionDownFilter, setCaretPositionDownFilter] = useState(true);
+  const [caretPositionDownNav, setCaretPositionDownNav] = useState(true);
 
   return (
     <AppBar position="static" className={classes.headerContainer}>

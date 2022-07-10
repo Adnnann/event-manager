@@ -1,25 +1,10 @@
-import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { getLoggedUserData, setEventToEdit } from "../../features/eventsSlice";
-import {
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-} from "@mui/material";
+import { Grid, Card, CardMedia, CardContent } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Button, CardActions, Typography } from "@mui/material";
-import DropdownButtons from "../utils/DropdownButtons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark, faPen } from "@fortawesome/free-solid-svg-icons";
-import { Navigate, useNavigate } from "react-router-dom";
-import EditEvent from "./EditEvent";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -126,6 +111,13 @@ const Event = ({ events, register, userEvents, cancel }) => {
                       )}`}
                     </Typography>
                   )}
+
+                  {item.createdBy === loggedUser.user._id ? (
+                    <Typography component={"p"} fontStyle="italic">
+                      {`Participants: ${item.participants.length}`}
+                    </Typography>
+                  ) : null}
+
                   {item.participants.length > 0 &&
                   item.participants.filter(
                     (item) => item.participant === loggedUser.user._id

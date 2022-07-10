@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import _ from "lodash";
 import {
   clearRegistrationResponseStatus,
   fetchEvents,
@@ -62,8 +61,6 @@ const UserEvents = ({ socket }) => {
     }
   }, [registrationResponseStatus]);
 
-  //add reject and approve functionalities for events where creator of event did not respond
-  //buttons to be displayed only where status is pending
   const approveRegistration = (eventId, participantId, title) => {
     let participantsArr = [];
 
@@ -138,7 +135,7 @@ const UserEvents = ({ socket }) => {
         ? userEvents.events
             .filter((item) => item.participants.length > 0)
             .map((item) => {
-              return item.participants.map((event) => {
+              return item.participants.map((event, index) => {
                 return (
                   <Grid
                     item

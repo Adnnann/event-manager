@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { cleanStore } from "../../features/eLearningSlice";
-
 const LoggedOutUser = () => {
   const dispatch = useDispatch();
 

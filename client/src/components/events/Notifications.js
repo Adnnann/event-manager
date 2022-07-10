@@ -6,9 +6,10 @@ import {
   DialogActions,
   Button,
   Typography,
+  Card,
 } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClose, faCommentsDollar } from "@fortawesome/free-solid-svg-icons";
+import { faClose } from "@fortawesome/free-solid-svg-icons";
 
 const Notifications = ({
   registrationArr,
@@ -21,11 +22,11 @@ const Notifications = ({
   return (
     <Dialog open={open}>
       <DialogTitle>Event registration notifications</DialogTitle>
-
       {registrationArr.map((item, index) => {
         return (
-          <>
+          <Card key={index}>
             <DialogActions
+              key={`${index} - ${item.id}`}
               style={{
                 marginLeft: "auto",
                 fontSize: "240px !important",
@@ -115,7 +116,7 @@ const Notifications = ({
                 </Button>
               )}
             </DialogActions>
-          </>
+          </Card>
         );
       })}
     </Dialog>

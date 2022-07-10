@@ -1,30 +1,25 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import moment from "moment";
 import {
   uploadImage,
   getUploadUserImageStatus,
   cleanUploadImageStatus,
   getLoggedUserData,
-  cleanAddEventMessage,
-  getCreateCourseMessage,
   getUserToken,
-  userToken,
-  createEvent,
   fetchEvents,
-  getCreateEventMessage,
   getEventToEdit,
   fetchUserEvents,
   getUpdateEventStatus,
   cleanUpdateEventStatus,
   updateEvent,
 } from "../../features/eventsSlice";
-import { Button, Card, CardMedia, Grid, TextField } from "@mui/material";
+import { Button, Card, CardMedia, Grid } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
 import ImagePlaceholder from "../../assets/imagePlaceholder.png";
 import TextFieldsGenerator from "../utils/TextFieldsGenerator";
 import { makeStyles } from "@mui/styles";
-import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -138,6 +133,7 @@ const EditEvent = ({ socket }) => {
         category: "",
         error: "",
       });
+
       dispatch(cleanUploadImageStatus());
       navigate("/dashboard");
     }

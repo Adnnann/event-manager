@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import moment from "moment";
+import _ from "lodash";
 import {
   cancelEvent,
   cleanCanceledEventStatus,
-  cleanUpdateEventStatus,
   clearRegistrationNotificationStatus,
   clearRegistrationResponseStatus,
   fetchEvents,
@@ -13,10 +12,8 @@ import {
   getEvents,
   getFilter,
   getLoggedUserData,
-  getRegistrationNotification,
   getRegistrationNotificationStatus,
   getRegistrationResponseStatus,
-  getUpdateEventStatus,
   getUserEvents,
   registerForEvent,
   sendRegistrationResponse,
@@ -24,7 +21,6 @@ import {
 import { Grid } from "@mui/material";
 import Event from "./Event";
 import Notifications from "./Notifications";
-import _ from "lodash";
 
 const Events = ({ socket }) => {
   const events = useSelector(getEvents);
@@ -43,6 +39,7 @@ const Events = ({ socket }) => {
 
   useEffect(() => {
     socket?.on("getRegistrationNotification", (data) => {
+      dispatch(fetchEvents());
       dispatch(fetchUserEvents(loggedUser.user._id));
       setRegistrationNotification([...registrationNotification, data]);
     });
@@ -156,6 +153,13 @@ const Events = ({ socket }) => {
         (data) => data.email !== email || data.title !== title
       ),
     ]);
+    const data = {
+      senderId: loggedUser.user._id,
+      receiverId: id,
+      eventTitle: title,
+      response: "approved",
+    };
+    setRegistrationResponse([...registrationResponse, data]);
   };
 
   const rejectRegistration = (email, title, userId) => {
@@ -187,6 +191,14 @@ const Events = ({ socket }) => {
 
     dispatch(sendRegistrationResponse(event));
 
+    const data = {
+      senderId: loggedUser.user._id,
+      receiverId: id,
+      eventTitle: title,
+      response: "approved",
+    };
+    setRegistrationResponse([...registrationResponse, data]);
+
     socket.emit("sendRegistrationResponse", {
       senderId: loggedUser.user._id,
       receiverId: id,
@@ -204,6 +216,7 @@ const Events = ({ socket }) => {
     dispatch(cancelEvent(id));
     socket.emit("cancelEvent");
   };
+
   return (
     <>
       <Grid container spacing={1} marginTop={2} justifyContent="space-evenly">
@@ -309,7 +322,14 @@ const Events = ({ socket }) => {
           registrationArr={registrationResponse}
           approve={approveRegistration}
           remove={removeNotification}
-          open={Object.keys(registrationResponse).length > 0 ? true : false}
+          open={
+            Object.keys(registrationResponse).length > 0 &&
+            registrationResponse.filter(
+              (user) => user.senderId !== loggedUser.user._id
+            ).length > 0
+              ? true
+              : false
+          }
           removeResponse={removeResponse}
         />
       ) : null}

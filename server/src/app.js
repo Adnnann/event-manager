@@ -9,7 +9,7 @@ import authRoutes from "./routes/auth.routes";
 import userImageRoutes from "./routes/userImage.routes";
 import eventRoutes from "./routes/events.routes";
 
-var app = express();
+const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

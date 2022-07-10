@@ -97,7 +97,6 @@ const Login = ({ socket }) => {
       dispatch(fetchUserEvents(loggedUser.user._id));
       navigate("/dashboard");
     }
-    console.log(socket);
   }, [loggedUser, socket]);
 
   const clickSubmit = () => {

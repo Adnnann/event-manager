@@ -20,8 +20,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Checkbox,
-  useMediaQuery,
 } from "@mui/material";
 import TextFieldsGenerator from "../utils/TextFieldsGenerator";
 import { makeStyles } from "@mui/styles";
@@ -104,10 +102,6 @@ const Signup = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const signedUser = useSelector(getSignedUser);
-
-  const iPadAirScreen = useMediaQuery("(width:820px)");
-  const iPadMiniScreen = useMediaQuery("(width:768px)");
-  const surfaceDuo = useMediaQuery("(width:912px)");
 
   const [values, setValues] = useState({
     firstName: "",

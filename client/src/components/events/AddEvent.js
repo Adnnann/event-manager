@@ -7,13 +7,11 @@ import {
   cleanUploadImageStatus,
   getLoggedUserData,
   cleanAddEventMessage,
-  getCreateCourseMessage,
   getUserToken,
   userToken,
   createEvent,
   fetchEvents,
   getCreateEventMessage,
-  getEventToEdit,
 } from "../../features/eventsSlice";
 import { Button, Card, CardMedia, Grid } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
