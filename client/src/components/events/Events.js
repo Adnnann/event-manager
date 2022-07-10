@@ -236,6 +236,7 @@ const Events = ({ socket }) => {
         </Grid>
 
         {Object.keys(events).length !== 0 &&
+        Object.keys(loggedUser).length !== 0 &&
         (filter === "myEvents" || filter === "allEvents") ? (
           <Event
             events={events.events.filter(
@@ -262,6 +263,7 @@ const Events = ({ socket }) => {
           )}
         </Grid>
         {Object.keys(events).length !== 0 &&
+        Object.keys(loggedUser).length !== 0 &&
         (filter === "courses" || filter === "allEvents") ? (
           <Event
             events={_.chain(
@@ -292,6 +294,7 @@ const Events = ({ socket }) => {
           )}
         </Grid>
         {Object.keys(events).length !== 0 &&
+        Object.keys(loggedUser).length !== 0 &&
         (filter === "meetups" || filter === "allEvents") ? (
           <Event
             events={_.chain(

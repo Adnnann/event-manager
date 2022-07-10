@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
-const crypto = require("crypto");
-const validate = require("mongoose-validator");
+import mongoose from "mongoose";
+import crypto from "crypto";
+import validate from "mongoose-validator";
 
 const emailValidator = [
   validate({
@@ -95,5 +95,4 @@ UserSchema.path("email").validate(async function (email) {
   return true;
 }, "Email already exists!");
 
-const User = mongoose.model("User", UserSchema);
-module.exports = User;
+export default mongoose.model("User", UserSchema);

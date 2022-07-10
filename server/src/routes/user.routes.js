@@ -1,20 +1,14 @@
 import express from "express";
-import passport from "passport";
-import userCtrl from "../controllers/user.controller";
-
-require("../middleware/passport");
+import userCtrl from "../controllers/user.controller.js";
 
 const router = express.Router();
 
-router.get(
-  "/protected",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    if (req.cookies.userJwtToken) {
-      res.send(JSON.stringify({ message: req.cookies.userJwtToken }));
-    }
+router.get("/protected", (req, res) => {
+  if (req.cookies.userJwtToken) {
+    return res.send({ message: req.cookies.userJwtToken });
   }
-);
+  return res.send({ error: "User not signed" });
+});
 
 router.route("/api/users/").post(userCtrl.create);
 

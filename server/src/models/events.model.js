@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const EventsSchema = new mongoose.Schema({
   title: {
@@ -52,5 +52,4 @@ EventsSchema.path("title").validate(async function (title) {
   return true;
 }, "Event name must be unique!");
 
-const Events = mongoose.model("Events", EventsSchema);
-module.exports = Events;
+export default mongoose.model("Events", EventsSchema);

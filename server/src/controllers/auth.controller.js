@@ -1,9 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 import jwt from "jsonwebtoken";
 import expressJwt from "express-jwt";
-import User from "../models/user.model";
-import config from "../config/config";
-import Course from "../models/events.model";
+import User from "../models/user.model.js";
+import config from "../config/config.js";
+import Course from "../models/events.model.js";
 
 const signin = async (req, res) => {
   const courseNum = await Course.find({}).exec();
@@ -58,15 +58,15 @@ const requireSignin = expressJwt({
   userProperty: "auth",
 });
 
-const hasAuthorization = (req, res, next) => {
-  const authorized = req.profile && req.auth && req.profile._id == req.auth._id;
-  if (!authorized) return res.status(403).json("User is not authorized!");
+const isSignedUser = (req, res, next) => {
+  if (!req.cookies.userJwtToken) {
+    return res.send({ error: "User not signed" });
+  }
   next();
 };
 
 export default {
   signin,
   signout,
-  hasAuthorization,
-  requireSignin,
+  isSignedUser,
 };

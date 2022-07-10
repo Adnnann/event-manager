@@ -1,7 +1,8 @@
 import multer from "multer";
 import express from "express";
 import fs from "file-system";
-import imageCtrl from "../controllers/user.image.controller";
+import imageCtrl from "../controllers/user.image.controller.js";
+import authCtrl from "../controllers/auth.controller.js";
 
 const storageUserImage = multer.diskStorage({
   destination: (req, file, callback) => {
@@ -24,6 +25,10 @@ const router = express.Router();
 
 router
   .route("/uploadImage")
-  .post(uploadUserImage.single("userImage"), imageCtrl.create);
+  .post(
+    authCtrl.isSignedUser,
+    uploadUserImage.single("userImage"),
+    imageCtrl.create
+  );
 
 export default router;

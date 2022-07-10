@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import fs from "file-system";
-import Image from "../models/image.model";
+import Image from "../models/image.model.js";
 
 const create = async (req, res, next) => {
   const fileName = req.file.originalname;

@@ -36,7 +36,7 @@ export const signoutUser = createAsyncThunk("users/user", async () => {
   return response.data;
 });
 
-export const userToken = createAsyncThunk("users/protected", async () => {
+export const isSignedUser = createAsyncThunk("events/isSigned", async () => {
   return await axios
     .get("/protected", {
       headers: {
@@ -46,6 +46,20 @@ export const userToken = createAsyncThunk("users/protected", async () => {
     .then((response) => response.data)
     .catch((error) => error.message);
 });
+
+export const fetchUserData = createAsyncThunk(
+  "events/loggedUser",
+  async (id) => {
+    return await axios
+      .get(`/api/users/${id}`, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      })
+      .then((response) => response.data)
+      .catch((error) => error.message);
+  }
+);
 
 export const fetchEvents = createAsyncThunk("events/events", async () => {
   return await axios
@@ -146,7 +160,7 @@ const initialState = {
   userData: {},
   loggedUser: {},
   signedOut: {},
-  userToken: {},
+  isSigned: {},
   addEvent: {},
   courseOverviewModal: [],
   events: {},
@@ -190,9 +204,6 @@ const eventsSlice = createSlice({
     cleanAddEventMessage: (state, action) => {
       state.addEvent = {};
     },
-    setUserToken: (state, action) => {
-      state.userToken = action.payload;
-    },
     setLoggedUserStatus: (state, action) => {
       state.loggedUser = "signout";
     },
@@ -230,8 +241,8 @@ const eventsSlice = createSlice({
     [signoutUser.fulfilled]: (state, { payload }) => {
       return { ...state, signedOut: payload };
     },
-    [userToken.fulfilled]: (state, { payload }) => {
-      return { ...state, userToken: payload };
+    [isSignedUser.fulfilled]: (state, { payload }) => {
+      return { ...state, isSigned: payload };
     },
     [createEvent.fulfilled]: (state, { payload }) => {
       return { ...state, addEvent: payload };
@@ -258,6 +269,9 @@ const eventsSlice = createSlice({
     [updateEvent.fulfilled]: (state, { payload }) => {
       return { ...state, updateEvent: payload };
     },
+    [fetchUserData.fulfilled]: (state, { payload }) => {
+      return { ...state, loggedUser: payload };
+    },
   },
 });
 
@@ -266,7 +280,7 @@ export const getSignupUserFormStatus = (state) => state.events.singupUserForm;
 export const getSignedUser = (state) => state.events.signedupUser;
 export const getLoggedUserData = (state) => state.events.loggedUser;
 export const getUploadUserImageStatus = (state) => state.events.uploadImage;
-export const getUserToken = (state) => state.events.userToken;
+export const checkUserStatus = (state) => state.events.isSigned;
 export const getEvents = (state) => state.events.events;
 export const getUserEvents = (state) => state.events.userEvents;
 export const getEventData = (state) => state.events.addEvent;

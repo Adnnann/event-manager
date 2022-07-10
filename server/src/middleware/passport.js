@@ -1,6 +1,6 @@
 import passport from "passport";
 import passportJwt from "passport-jwt";
-import config from "../config/config";
+import config from "../config/config.js";
 
 const cookieExtractor = (req) => {
   let jwt;

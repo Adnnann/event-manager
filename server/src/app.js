@@ -4,10 +4,10 @@ import cors from "cors";
 import helmet from "helmet";
 import passport from "passport";
 import cookieParser from "cookie-parser";
-import userRoutes from "./routes/user.routes";
-import authRoutes from "./routes/auth.routes";
-import userImageRoutes from "./routes/userImage.routes";
-import eventRoutes from "./routes/events.routes";
+import userRoutes from "./routes/user.routes.js";
+import authRoutes from "./routes/auth.routes.js";
+import userImageRoutes from "./routes/userImage.routes.js";
+import eventRoutes from "./routes/events.routes.js";
 
 const app = express();
 
@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(compress());
 app.use(cors());
 app.use(helmet());
-app.use(passport.initialize());
+//app.use(passport.initialize());
 app.use(cookieParser());
 
 app.use("/", authRoutes);

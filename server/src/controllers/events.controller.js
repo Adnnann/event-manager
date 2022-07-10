@@ -1,7 +1,7 @@
 import _ from "lodash";
 import jwtDecode from "jwt-decode";
-import Event from "../models/events.model";
-import dbErrorHandlers from "./helpers/dbErrorHandlers";
+import Event from "../models/events.model.js";
+import dbErrorHandlers from "./helpers/dbErrorHandlers.js";
 
 const createEvent = (req, res) => {
   const event = new Event(req.body);

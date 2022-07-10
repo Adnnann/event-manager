@@ -1,4 +1,6 @@
-require("dotenv").config();
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const password = process.env.PASSWORD;
 const database = process.env.DATABASE;
@@ -11,4 +13,4 @@ const config = {
     "mongodb://localhost:27017/eventManager",
 };
 
-module.exports = config;
+export default config;

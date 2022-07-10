@@ -1,20 +1,23 @@
 import express from "express";
-import eventCtrl from "../controllers/events.controller";
+import eventCtrl from "../controllers/events.controller.js";
+import authCtrl from "../controllers/auth.controller.js";
 
 const router = express.Router();
 
 router
   .route("/api/events")
-  .post(eventCtrl.createEvent)
-  .get(eventCtrl.getEvents);
+  .post(authCtrl.isSignedUser, eventCtrl.createEvent)
+  .get(authCtrl.isSignedUser, eventCtrl.getEvents);
 
-router.route("/api/userEvents/").post(eventCtrl.getUserEvents);
+router
+  .route("/api/userEvents/")
+  .post(authCtrl.isSignedUser, eventCtrl.getUserEvents);
 
 router
   .route("/api/event/:eventId")
-  .get(eventCtrl.getEvent)
-  .put(eventCtrl.updateEvent)
-  .delete(eventCtrl.removeEvent);
+  .get(authCtrl.isSignedUser, eventCtrl.getEvent)
+  .put(authCtrl.isSignedUser, eventCtrl.updateEvent)
+  .delete(authCtrl.isSignedUser, eventCtrl.removeEvent);
 
 router.route("/api/eventRegistration").post(eventCtrl.registerForEvent);
 

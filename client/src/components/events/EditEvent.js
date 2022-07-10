@@ -93,7 +93,6 @@ const EditEvent = ({ socket }) => {
   const uploadImageStatus = useSelector(getUploadUserImageStatus);
   const loggedUser = useSelector(getLoggedUserData);
   const classes = useStyles();
-  const token = useSelector(getUserToken);
 
   const [values, setValues] = useState({
     title: "",

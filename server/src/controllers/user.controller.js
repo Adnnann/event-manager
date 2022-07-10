@@ -1,10 +1,10 @@
 /* eslint-disable no-underscore-dangle */
 import jwt from "jsonwebtoken";
 import _ from "lodash";
-import User from "../models/user.model";
-import errorHandler from "./helpers/dbErrorHandlers";
-import Course from "../models/events.model";
-import config from "../config/config";
+import User from "../models/user.model.js";
+import errorHandler from "./helpers/dbErrorHandlers.js";
+import Course from "../models/events.model.js";
+import config from "../config/config.js";
 
 const create = (req, res, next) => {
   const user = new User(req.body);

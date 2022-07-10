@@ -90,20 +90,15 @@ const AddEvent = () => {
   const uploadImageStatus = useSelector(getUploadUserImageStatus);
   const loggedUser = useSelector(getLoggedUserData);
   const classes = useStyles();
-  const token = useSelector(getUserToken);
 
   useEffect(() => {
-    if (Object.keys(loggedUser).length === 0 && !token?.message) {
-      dispatch(userToken());
-    }
-
     if (addEventStatus?.message) {
       dispatch(fetchEvents());
       dispatch(cleanAddEventMessage());
       dispatch(cleanUploadImageStatus());
       navigate("/dashboard");
     }
-  }, [addEventStatus, token, loggedUser]);
+  }, [addEventStatus, loggedUser]);
 
   const [values, setValues] = useState({
     title: "",

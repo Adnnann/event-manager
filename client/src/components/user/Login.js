@@ -3,7 +3,6 @@ import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import {
   signinUser,
-  userToken,
   setSigninUserForm,
   setSignupUserForm,
   getLoggedUserData,
@@ -82,10 +81,6 @@ const Login = ({ socket }) => {
   });
 
   useEffect(() => {
-    if (loggedUser?.token) {
-      dispatch(userToken());
-    }
-
     if (loggedUser?.user) {
       const user = {
         id: loggedUser.user._id,
