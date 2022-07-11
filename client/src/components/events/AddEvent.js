@@ -7,8 +7,6 @@ import {
   cleanUploadImageStatus,
   getLoggedUserData,
   cleanAddEventMessage,
-  getUserToken,
-  userToken,
   createEvent,
   fetchEvents,
   getCreateEventMessage,
@@ -87,8 +85,6 @@ const AddEvent = ({ socket }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const allEvents = useSelector(getEvents);
-
-  console.log(allEvents.events.length);
 
   const addEventStatus = useSelector(getCreateEventMessage);
   const uploadImageStatus = useSelector(getUploadUserImageStatus);

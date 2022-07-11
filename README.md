@@ -13,11 +13,6 @@ User can remove or edit only events which did not finish (i.e. if event date was
 Events will be updated automatically to all logged users and information will be displayed when event was updated so that any user can track all info about the events for which they are interested.
 ## Important info
 
-In order to use the app you should change in server/config/config.js url for Atlas Mongo DB database and in client/.env file you should store following data:
-
-DATABASE=YOUR MONGODB NAME
-PASSWORD=YOUR MONGODB PASSWORD
-
 Default port for connection to the express server is 5000 and default proxy set in package.json in client folder is http://localhost:5000/ (do not forget / at the end of string).
 
 User can use seed by running node seed on server folder and create 100 dummy events. Also user can run deleteSeed to delete all events from the database.

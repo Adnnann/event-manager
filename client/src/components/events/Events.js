@@ -165,6 +165,8 @@ const Events = ({ socket }) => {
       response: "approved",
     };
     setRegistrationResponse([...registrationResponse, data]);
+
+    dispatch(fetchEvents());
   };
 
   const rejectRegistration = (email, title, userId) => {
