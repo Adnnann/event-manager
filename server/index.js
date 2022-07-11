@@ -35,7 +35,6 @@ const getUser = (id) => {
 
 io.on("connection", (socket) => {
   socket.on("newUser", (user) => {
-    console.log("reloged");
     addNewUser(user, socket.id);
   });
 
