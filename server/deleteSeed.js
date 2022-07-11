@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
-const Events = require("./src/models/events.model");
-const Users = require("./src/models/user.model");
-const config = require("./src/config/config");
+import mongoose from "mongoose";
+import Events from "./src/models/events.model.js";
+import Users from "./src/models/user.model.js";
+import config from "./src/config/config.js";
 
 mongoose
   .connect(config.mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })

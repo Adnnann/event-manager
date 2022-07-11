@@ -1,9 +1,9 @@
 /* eslint-disable no-underscore-dangle */
-const mongoose = require("mongoose");
-const _ = require("lodash");
-const Users = require("./src/models/user.model");
-const Events = require("./src/models/events.model");
-const config = require("./src/config/config");
+import mongoose from "mongoose";
+import _ from "lodash";
+import Users from "./src/models/user.model.js";
+import Events from "./src/models/events.model.js";
+import config from "./src/config/config.js";
 
 const courses = [];
 const usersId = [];
