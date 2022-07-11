@@ -14,12 +14,14 @@ import {
   getUpdateEventStatus,
   cleanUpdateEventStatus,
   updateEvent,
+  getEvents,
 } from "../../features/eventsSlice";
 import { Button, Card, CardMedia, Grid } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
 import ImagePlaceholder from "../../assets/imagePlaceholder.png";
 import TextFieldsGenerator from "../utils/TextFieldsGenerator";
 import { makeStyles } from "@mui/styles";
+import { indexOf } from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -89,6 +91,7 @@ const EditEvent = ({ socket }) => {
   const navigate = useNavigate();
   const eventToEdit = useSelector(getEventToEdit);
   const updateEventStatus = useSelector(getUpdateEventStatus);
+  const allEvents = useSelector(getEvents);
 
   const uploadImageStatus = useSelector(getUploadUserImageStatus);
   const loggedUser = useSelector(getLoggedUserData);
@@ -108,7 +111,9 @@ const EditEvent = ({ socket }) => {
       title: eventToEdit.title,
       description: eventToEdit.description,
       price: eventToEdit.price,
-      date: moment(eventToEdit.date).format("YYYY-MM-DD"),
+      date: `${moment(eventToEdit.date).format("YYYY-MM-DD")}T${moment(
+        eventToEdit.date
+      ).format("HH:MM")}`,
       category: eventToEdit.category,
       error: "",
     });
@@ -142,13 +147,14 @@ const EditEvent = ({ socket }) => {
     const eventToAdd = {
       [name]: event.target.value,
     };
+
     setValues({
       ...values,
       ...eventToAdd,
     });
   };
 
-  const types = ["text", "text", "text", "date"];
+  const types = ["text", "text", "text", "datetime-local"];
   const categories = ["courses", "meetups"];
   const labels = [
     "Title",
@@ -166,6 +172,22 @@ const EditEvent = ({ socket }) => {
   const multiline = [false, true, false, false];
 
   const clickSubmit = () => {
+    if (new Date(values.date) < Date.now()) {
+      return setValues({
+        ...values,
+        error: "Date has to be current or future date",
+      });
+    } else {
+      setValues({
+        ...values,
+        error: "",
+      });
+    }
+
+    if (values.error !== "") {
+      return;
+    }
+
     const event = {
       param: eventToEdit._id,
       data: {
@@ -182,7 +204,7 @@ const EditEvent = ({ socket }) => {
 
     dispatch(updateEvent(event));
   };
-
+  console.log();
   const cancel = () => {
     dispatch(cleanUploadImageStatus());
     navigate("/dashboard");
@@ -197,9 +219,9 @@ const EditEvent = ({ socket }) => {
     formData.append(
       "userImage",
       event.target.files[0],
-      `${eventToEdit.title.replace(/\s+/g, "")}-${Date.now()}.${
-        event.target.files[0].name.split(".")[1]
-      }`
+      `eventImage${allEvents.events.findIndex(
+        (event) => event.title === eventToEdit.title
+      )}-${Date.now()}.${event.target.files[0].name.split(".")[1]}`
     );
     dispatch(uploadImage(formData, { id: "test" }));
   };
@@ -255,7 +277,9 @@ const EditEvent = ({ socket }) => {
               {updateEventStatus.error || values.error}
             </p>
           ) : null}
-
+          {uploadImageStatus?.error ? (
+            <p className={classes.error}>{uploadImageStatus.error}</p>
+          ) : null}
           <Button
             fullWidth
             color="error"

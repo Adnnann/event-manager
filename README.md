@@ -7,6 +7,10 @@ Click on the logo in center of heading of the app will redirect user to dashboar
 ## Login and sign up
 
 User can sign in and sign out and also can create event. User can also edit and remove all events created by him.
+
+User can remove or edit only events which did not finish (i.e. if event date was in the past event cannot be edited nor removed)
+
+Events will be updated automatically to all logged users and information will be displayed when event was updated so that any user can track all info about the events for which they are interested.
 ## Important info
 
 In order to use the app you should change in server/config/config.js url for Atlas Mongo DB database and in client/.env file you should store following data:

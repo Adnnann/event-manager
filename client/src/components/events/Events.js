@@ -36,43 +36,44 @@ const Events = ({ socket }) => {
 
   const filter = useSelector(getFilter);
   const dispatch = useDispatch();
+  const loggedUser = useSelector(getLoggedUserData);
 
   useEffect(() => {
-    socket?.on("getRegistrationNotification", (data) => {
-      dispatch(fetchEvents());
-      dispatch(fetchUserEvents(loggedUser.user._id));
-      setRegistrationNotification([...registrationNotification, data]);
-    });
+    if (loggedUser?.user) {
+      socket?.on("getRegistrationNotification", (data) => {
+        dispatch(fetchEvents());
+        dispatch(fetchUserEvents(loggedUser.user._id));
+        setRegistrationNotification([...registrationNotification, data]);
+      });
 
-    socket?.on("getRegistrationResponse", (data) => {
-      dispatch(fetchEvents());
-      dispatch(fetchUserEvents(loggedUser.user._id));
-      setRegistrationResponse([...registrationResponse, data]);
-    });
-    socket?.on("getCreatedEventNotification", () => {
-      console.log("event added");
-      dispatch(fetchEvents());
-      dispatch(fetchUserEvents(loggedUser.user._id));
-    });
-    socket?.on("getCanceledEventNotification", () => {
-      dispatch(fetchEvents());
-      dispatch(fetchUserEvents(loggedUser.user._id));
-    });
+      socket?.on("getRegistrationResponse", (data) => {
+        dispatch(fetchEvents());
+        dispatch(fetchUserEvents(loggedUser.user._id));
+        setRegistrationResponse([...registrationResponse, data]);
+      });
+      socket?.on("getCreatedEventNotification", () => {
+        dispatch(fetchEvents());
+      });
+      socket?.on("getCanceledEventNotification", () => {
+        dispatch(fetchEvents());
+        dispatch(fetchUserEvents(loggedUser.user._id));
+      });
 
-    if (registrationNotificationStatus?.message) {
-      dispatch(fetchEvents());
-      dispatch(clearRegistrationNotificationStatus());
-    }
+      if (registrationNotificationStatus?.message) {
+        dispatch(fetchEvents());
+        dispatch(clearRegistrationNotificationStatus());
+      }
 
-    if (registrationResponseStatus?.message) {
-      dispatch(fetchUserEvents(loggedUser.user._id));
-      dispatch(clearRegistrationResponseStatus());
-    }
+      if (registrationResponseStatus?.message) {
+        dispatch(fetchUserEvents(loggedUser.user._id));
+        dispatch(clearRegistrationResponseStatus());
+      }
 
-    if (cancelEventStatus?.message) {
-      dispatch(fetchUserEvents(loggedUser.user._id));
-      dispatch(fetchEvents());
-      dispatch(cleanCanceledEventStatus());
+      if (cancelEventStatus?.message) {
+        dispatch(fetchUserEvents(loggedUser.user._id));
+        dispatch(fetchEvents());
+        dispatch(cleanCanceledEventStatus());
+      }
     }
   }, [
     socket,
@@ -81,9 +82,8 @@ const Events = ({ socket }) => {
     registrationNotificationStatus,
     registrationResponseStatus,
     cancelEventStatus,
+    loggedUser,
   ]);
-
-  const loggedUser = useSelector(getLoggedUserData);
 
   const register = (id, title, eventId, description) => {
     const event = {
@@ -251,6 +251,12 @@ const Events = ({ socket }) => {
             register={register}
             cancel={cancel}
           />
+        ) : null}
+
+        {Object.keys(events).length !== 0 &&
+        events.events.filter((item) => item.createdBy === loggedUser.user._id)
+          .length === 0 ? (
+          <h2 style={{ color: "limegreen" }}>You do not have any events yet</h2>
         ) : null}
 
         <Grid item xs={12} md={12} lg={12} xl={12}>

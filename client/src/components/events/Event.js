@@ -96,7 +96,8 @@ const Event = ({ events, register, userEvents, cancel }) => {
                     Event price: {parseFloat(item.price).toFixed(2)}
                   </Typography>
                   <Typography component={"p"}>
-                    Date: {moment(item.date).format("L")}
+                    Date: {moment(item.date).format("L")}{" "}
+                    {moment(item.date).format("HH:mm")}
                   </Typography>
                   <Typography
                     component={"p"}
@@ -114,7 +115,11 @@ const Event = ({ events, register, userEvents, cancel }) => {
 
                   {item.createdBy === loggedUser.user._id ? (
                     <Typography component={"p"} fontStyle="italic">
-                      {`Participants: ${item.participants.length}`}
+                      {`Participants: ${
+                        item.participants.filter(
+                          (item) => item.status === "approved"
+                        ).length
+                      }`}
                     </Typography>
                   ) : null}
 
@@ -193,6 +198,9 @@ const Event = ({ events, register, userEvents, cancel }) => {
                           fontSize: "18px",
                           marginBottom: "10px",
                         }}
+                        disabled={
+                          new Date(item.date) < Date.now() ? true : false
+                        }
                         onClick={() => editEvent(item._id)}
                       >
                         Edit
@@ -208,6 +216,9 @@ const Event = ({ events, register, userEvents, cancel }) => {
                           fontSize: "18px",
                           marginBottom: "10px",
                         }}
+                        disabled={
+                          new Date(item.date) < Date.now() ? true : false
+                        }
                       >
                         Remove
                       </Button>

@@ -5,12 +5,12 @@ const EventsSchema = new mongoose.Schema({
     type: String,
     trim: true,
     unique: "Title must be unique",
-    required: "Course title is required!",
+    required: "Event title is required!",
     maxlength: [55, "Title must be less than 55 characters"],
   },
   description: {
     type: String,
-    required: "Course description is required!",
+    required: "Event description is required!",
   },
   price: {
     type: String,
@@ -34,6 +34,7 @@ const EventsSchema = new mongoose.Schema({
   },
   category: {
     type: String,
+    required: "Category is required!",
   },
   participants: {
     type: Array,

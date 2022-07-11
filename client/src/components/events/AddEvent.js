@@ -12,6 +12,7 @@ import {
   createEvent,
   fetchEvents,
   getCreateEventMessage,
+  getEvents,
 } from "../../features/eventsSlice";
 import { Button, Card, CardMedia, Grid } from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
@@ -85,6 +86,9 @@ const useStyles = makeStyles((theme) => ({
 const AddEvent = ({ socket }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const allEvents = useSelector(getEvents);
+
+  console.log(allEvents.events.length);
 
   const addEventStatus = useSelector(getCreateEventMessage);
   const uploadImageStatus = useSelector(getUploadUserImageStatus);
@@ -122,7 +126,7 @@ const AddEvent = ({ socket }) => {
     });
   };
 
-  const types = ["text", "text", "text", "date"];
+  const types = ["text", "text", "text", "datetime-local"];
   const categories = ["courses", "meetups"];
   const labels = ["Title", "Event description", "Event price", "Event date"];
   const textFields = ["title", "description", "price", "date"];
@@ -134,12 +138,28 @@ const AddEvent = ({ socket }) => {
   const multiline = [false, true, false, false];
 
   const clickSubmit = () => {
+    if (new Date(values.date) < Date.now()) {
+      return setValues({
+        ...values,
+        error: "Date has to be current or future date",
+      });
+    } else {
+      setValues({
+        ...values,
+        error: "",
+      });
+    }
+
+    if (values.error !== "") {
+      return;
+    }
     const event = {
       createdBy: loggedUser.user._id,
       eventImage: uploadImageStatus?.imageUrl
         ? uploadImageStatus.imageUrl
         : "https://media-exp1.licdn.com/dms/image/C561BAQE-51J-8KkMZg/company-background_10000/0/1548357920228?e=2147483647&v=beta&t=wrOVYN8qrGon9jILrMQv78FsyOV4IMQxr_3UjYtUREI",
       ...values,
+      date: new Date(values.date).toISOString(),
     };
 
     dispatch(createEvent(event));
@@ -159,7 +179,7 @@ const AddEvent = ({ socket }) => {
     formData.append(
       "userImage",
       event.target.files[0],
-      `eventImage${loggedUser.courseNum}-${Date.now()}.${
+      `eventImage${allEvents.events.length}-${Date.now()}.${
         event.target.files[0].name.split(".")[1]
       }`
     );
@@ -213,7 +233,9 @@ const AddEvent = ({ socket }) => {
               {addEventStatus.error || values.error}
             </p>
           ) : null}
-
+          {uploadImageStatus?.error ? (
+            <p className={classes.error}>{uploadImageStatus.error}</p>
+          ) : null}
           <Button
             fullWidth
             color="error"
