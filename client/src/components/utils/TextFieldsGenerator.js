@@ -26,7 +26,7 @@ export default function TextFieldsGenerator({
             }}
           >
             <TextField
-              placeholder={placeholder[index]}
+              // placeholder={placeholder[index]}
               autoFocus
               fullWidth
               onChange={handleChange(item)}

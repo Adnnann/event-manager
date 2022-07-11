@@ -3,11 +3,8 @@ import jwt from "jsonwebtoken";
 import expressJwt from "express-jwt";
 import User from "../models/user.model.js";
 import config from "../config/config.js";
-import Course from "../models/events.model.js";
 
 const signin = async (req, res) => {
-  const courseNum = await Course.find({}).exec();
-
   User.findOne({ email: req.body.email }, (err, user) => {
     if (err || !user) {
       return res.send({ error: "User not found" });
@@ -37,12 +34,8 @@ const signin = async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        role: user.role,
         userImage: user.userImage,
-        enrolledInCourses: user.enrolledInCourses,
-        completedCourses: user.completedCourses,
       },
-      courseNum: user.role !== "student" ? courseNum.length : null,
     });
   });
 };

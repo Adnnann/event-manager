@@ -82,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
   error: { color: "red" },
 }));
 
-const AddEvent = () => {
+const AddEvent = ({ socket }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -96,6 +96,9 @@ const AddEvent = () => {
       dispatch(fetchEvents());
       dispatch(cleanAddEventMessage());
       dispatch(cleanUploadImageStatus());
+
+      socket.emit("createEvent");
+
       navigate("/dashboard");
     }
   }, [addEventStatus, loggedUser]);
@@ -133,7 +136,9 @@ const AddEvent = () => {
   const clickSubmit = () => {
     const event = {
       createdBy: loggedUser.user._id,
-      eventImage: uploadImageStatus?.imageUrl ? uploadImageStatus.imageUrl : "",
+      eventImage: uploadImageStatus?.imageUrl
+        ? uploadImageStatus.imageUrl
+        : "https://media-exp1.licdn.com/dms/image/C561BAQE-51J-8KkMZg/company-background_10000/0/1548357920228?e=2147483647&v=beta&t=wrOVYN8qrGon9jILrMQv78FsyOV4IMQxr_3UjYtUREI",
       ...values,
     };
 
@@ -163,9 +168,6 @@ const AddEvent = () => {
 
   return (
     <Card className={classes.card}>
-      {addEventStatus?.error || values.error ? (
-        <p className={classes.error}>{addEventStatus.error || values.error}</p>
-      ) : null}
       <h2 className={classes.addEventTitle}>Create your Event</h2>
       <p>Upload photo</p>
       <CardMedia
@@ -206,6 +208,11 @@ const AddEvent = () => {
             handleChange={handleChange("category")}
             className={classes.selectFields}
           />
+          {addEventStatus?.error || values.error ? (
+            <p className={classes.error}>
+              {addEventStatus.error || values.error}
+            </p>
+          ) : null}
 
           <Button
             fullWidth

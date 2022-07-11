@@ -49,6 +49,11 @@ const Events = ({ socket }) => {
       dispatch(fetchUserEvents(loggedUser.user._id));
       setRegistrationResponse([...registrationResponse, data]);
     });
+    socket?.on("getCreatedEventNotification", () => {
+      console.log("event added");
+      dispatch(fetchEvents());
+      dispatch(fetchUserEvents(loggedUser.user._id));
+    });
     socket?.on("getCanceledEventNotification", () => {
       dispatch(fetchEvents());
       dispatch(fetchUserEvents(loggedUser.user._id));

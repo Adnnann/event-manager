@@ -169,6 +169,10 @@ const Signup = () => {
 
   const types = ["text", "text", "text", "password", "password"];
 
+  const placeholder = ["Firstname", "Lastname", "Email", "Password"];
+
+  const multiline = [false, false, false, false];
+
   return (
     <>
       <Card className={classes.card}>
@@ -187,6 +191,8 @@ const Signup = () => {
                 labels={labels}
                 className={classes.textFields}
                 types={types}
+                multiline={multiline}
+                placeholder={placeholder}
               />
 
               {signedUser?.error && (

@@ -2,10 +2,10 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { getLoggedUserData } from "../../features/eventsSlice";
 import DashboardRightPanel from "./DashboardRightPanel";
-import { makeStyles } from "@mui/styles";
 
 const Dashboard = ({ socket }) => {
   const loggedUser = useSelector(getLoggedUserData);
+
   useEffect(() => {
     loggedUser?.user && socket?.emit("getUserData", loggedUser.user._id);
   }, []);

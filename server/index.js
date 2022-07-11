@@ -35,6 +35,7 @@ const getUser = (id) => {
 
 io.on("connection", (socket) => {
   socket.on("newUser", (user) => {
+    console.log("reloged");
     addNewUser(user, socket.id);
   });
 
@@ -72,6 +73,9 @@ io.on("connection", (socket) => {
       }
     }
   );
+  socket.on("createEvent", () => {
+    io.emit("getCreatedEventNotification", "eventCreated");
+  });
   socket.on("cancelEvent", () => {
     io.emit("getCanceledEventNotification", "eventCanceled");
   });

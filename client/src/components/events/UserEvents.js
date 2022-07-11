@@ -4,6 +4,7 @@ import {
   clearRegistrationResponseStatus,
   fetchEvents,
   fetchUserEvents,
+  getEvents,
   getLoggedUserData,
   getRegistrationResponseStatus,
   getUserEvents,
@@ -38,14 +39,18 @@ const useStyles = makeStyles((theme) => ({
     width: "240px",
     height: "220px",
     marginTop: "10px",
+    margin: "0 auto",
+    marginBottom: "5px",
     [theme.breakpoints.only("xs")]: {
-      marginLeft: "10px",
+      margin: "0 auto",
+      marginBottom: "5px",
     },
   },
 }));
 
 const UserEvents = ({ socket }) => {
   const userEvents = useSelector(getUserEvents);
+  const allEvents = useSelector(getEvents);
 
   const registrationResponseStatus = useSelector(getRegistrationResponseStatus);
   const dispatch = useDispatch();
@@ -158,7 +163,9 @@ const UserEvents = ({ socket }) => {
                         className={classes.image}
                         component={"img"}
                         src={
-                          "https://media-exp1.licdn.com/dms/image/C561BAQE-51J-8KkMZg/company-background_10000/0/1548357920228?e=2147483647&v=beta&t=wrOVYN8qrGon9jILrMQv78FsyOV4IMQxr_3UjYtUREI"
+                          allEvents.events.filter(
+                            (item) => item.title === event.title
+                          )[0].eventImage
                         }
                       ></CardMedia>
                     </Card>

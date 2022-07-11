@@ -228,6 +228,9 @@ const eventsSlice = createSlice({
     cleanUpdateEventStatus: (state, action) => {
       state.updateEvent = {};
     },
+    cleanIsSignedStatus: (state, action) => {
+      state.isSigned = {};
+    },
     //reset store state after logout or delete of account
     resetStore: () => initialState,
   },
@@ -308,6 +311,7 @@ export const {
   setEventToEdit,
   cleanCanceledEventStatus,
   cleanUpdateEventStatus,
+  cleanIsSignedStatus,
   resetStore,
 } = eventsSlice.actions;
 

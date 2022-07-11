@@ -9,6 +9,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import {
   checkUserStatus,
+  cleanIsSignedStatus,
   fetchEvents,
   fetchUserData,
   fetchUserEvents,
@@ -49,11 +50,23 @@ function MainRouter({ socket }) {
 
     if (Object.keys(loggedUser).length === 0 && isSigned?.message) {
       const userId = jwtDecode(isSigned.message);
+
       dispatch(fetchUserData(userId._id));
       dispatch(fetchEvents());
       dispatch(fetchUserEvents(userId._id));
     }
-  }, [isSigned]);
+
+    if (loggedUser?.user && isSigned.message) {
+      const user = {
+        id: loggedUser.user._id,
+        email: loggedUser.user.email,
+        name: loggedUser.user.name,
+      };
+
+      socket?.emit("newUser", user);
+      dispatch(cleanIsSignedStatus());
+    }
+  }, [isSigned, loggedUser, socket]);
   return (
     <Router>
       {loggedUser?.user ? <Header /> : null}
@@ -63,7 +76,10 @@ function MainRouter({ socket }) {
           path="/dashboard"
           element={<Dashboard socket={socket} />}
         ></Route>
-        <Route path="/createEvent" element={<AddEvent />}></Route>
+        <Route
+          path="/createEvent"
+          element={<AddEvent socket={socket} />}
+        ></Route>
         <Route
           path="/userEvents"
           element={<UserEvents socket={socket} />}

@@ -176,7 +176,7 @@ const EditEvent = ({ socket }) => {
         category: values.category,
         eventImage: uploadImageStatus?.imageUrl
           ? uploadImageStatus.imageUrl
-          : "",
+          : eventToEdit.eventImage,
       },
     };
 
@@ -206,9 +206,6 @@ const EditEvent = ({ socket }) => {
 
   return (
     <Card className={classes.card}>
-      {/* {addEventStatus?.error || values.error ? (
-        <p className={classes.error}>{addEventStatus.error || values.error}</p>
-      ) : null} */}
       <h2 className={classes.addEventTitle}>Edit Event</h2>
       <p>Upload photo</p>
       <CardMedia
@@ -252,6 +249,12 @@ const EditEvent = ({ socket }) => {
             handleChange={handleChange("category")}
             className={classes.selectFields}
           />
+
+          {updateEventStatus?.error || values.error ? (
+            <p className={classes.error}>
+              {updateEventStatus.error || values.error}
+            </p>
+          ) : null}
 
           <Button
             fullWidth
