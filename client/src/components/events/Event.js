@@ -5,6 +5,7 @@ import { getLoggedUserData, setEventToEdit } from "../../features/eventsSlice";
 import { Grid, Card, CardMedia, CardContent } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Button, CardActions, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -50,188 +51,185 @@ const Event = ({ events, register, userEvents, cancel }) => {
   return (
     <Grid container spacing={1} marginTop={2} justifyContent="space-evenly">
       {Object.keys(events).length !== 0
-        ? events.map((item) => {
-            return (
-              <Grid
-                key={item._id}
-                item
-                xs={12}
-                md={3}
-                lg={2}
-                xl={2}
-                style={{
-                  borderColor: "black",
-                  borderStyle: "solid",
-                  borderWidth: "1px",
-                  marginRight: "5px",
-                  paddingRight: "15px",
-                  marginBottom: "10px",
-                }}
-              >
-                <Card>
-                  <CardMedia
-                    className={classes.image}
-                    component={"img"}
-                    src={item.eventImage}
-                  ></CardMedia>
-                </Card>
+        ? events
+            .filter((item) => new Date(item.date) > Date.now())
+            .map((item) => {
+              return (
+                <Grid
+                  key={item._id}
+                  item
+                  xs={12}
+                  md={3}
+                  lg={2}
+                  xl={2}
+                  style={{
+                    borderColor: "black",
+                    borderStyle: "solid",
+                    borderWidth: "1px",
+                    marginRight: "5px",
+                    paddingRight: "15px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  <Card>
+                    <CardMedia
+                      className={classes.image}
+                      component={"img"}
+                      src={item.eventImage}
+                    ></CardMedia>
+                  </Card>
 
-                <CardContent style={{ textAlign: "left" }}>
-                  <Typography
-                    variant="h5"
-                    style={{
-                      textAlign: "left",
-                      marginTop: "10px",
-                      textDecoration:
-                        item.status === "canceled" ? "line-through" : "none",
-                      color: item.status === "canceled" ? "red" : "black",
-                    }}
-                  >
-                    {item.title}
-                  </Typography>
-                  <Typography component={"p"}>
-                    Date: {moment(item.data).format("L")}
-                  </Typography>
-                  <Typography component={"p"}>
-                    Event price: {parseFloat(item.price).toFixed(2)}
-                  </Typography>
-                  <Typography component={"p"}>
-                    Date: {moment(item.date).format("L")}{" "}
-                    {moment(item.date).format("HH:mm")}
-                  </Typography>
-                  <Typography
-                    component={"p"}
-                    style={{ wordBreak: "break-all" }}
-                  >
-                    Event description: {item.description}
-                  </Typography>
-                  {item?.updated && (
-                    <Typography component={"p"} color="green">
-                      {`Event updated at ${moment(item.updated).format(
-                        "L HH:MM"
-                      )}`}
+                  <CardContent style={{ textAlign: "left" }}>
+                    <Typography
+                      variant="h5"
+                      style={{
+                        textAlign: "left",
+                        marginTop: "10px",
+                        textDecoration:
+                          item.status === "canceled" ? "line-through" : "none",
+                        color: item.status === "canceled" ? "red" : "black",
+                      }}
+                    >
+                      {item.title}
                     </Typography>
-                  )}
-
-                  {item.createdBy === loggedUser.user._id ? (
-                    <Typography component={"p"} fontStyle="italic">
-                      {`Participants: ${
-                        item.participants.filter(
-                          (item) => item.status === "approved"
-                        ).length
-                      }`}
+                    <Typography component={"p"}>
+                      Date: {moment(item.data).format("L")}
                     </Typography>
-                  ) : null}
-
-                  {item.participants.length > 0 &&
-                  item.participants.filter(
-                    (item) => item.participant === loggedUser.user._id
-                  ).length > 0 ? (
+                    <Typography component={"p"}>
+                      Event price: {item.price}
+                    </Typography>
+                    <Typography component={"p"}>
+                      Date: {moment(item.date).format("L")}{" "}
+                      {moment(item.date).format("HH:mm")}
+                    </Typography>
                     <Typography
                       component={"p"}
                       style={{ wordBreak: "break-all" }}
                     >
-                      Reservation status:
-                      <span
-                        style={{
-                          color:
+                      Event description: {item.description}
+                    </Typography>
+                    {item?.updated && (
+                      <Typography component={"p"} color="green">
+                        {`Event updated at ${moment(item.updated).format(
+                          "L HH:MM"
+                        )}`}
+                      </Typography>
+                    )}
+
+                    {item.createdBy === loggedUser.user._id ? (
+                      <Typography component={"p"} fontStyle="italic">
+                        {`Participants: ${
+                          item.participants.filter(
+                            (item) => item.status === "approved"
+                          ).length
+                        }`}
+                      </Typography>
+                    ) : null}
+
+                    {item.participants.length > 0 &&
+                    item.participants.filter(
+                      (item) => item.participant === loggedUser.user._id
+                    ).length > 0 ? (
+                      <Typography
+                        component={"p"}
+                        style={{ wordBreak: "break-all" }}
+                      >
+                        Reservation status:
+                        <span
+                          style={{
+                            color:
+                              item.participants.filter(
+                                (item) =>
+                                  item.participant === loggedUser.user._id
+                              )[0].status === "pending"
+                                ? "red"
+                                : item.participants.filter(
+                                    (item) =>
+                                      item.participant === loggedUser.user._id
+                                  )[0].status === "rejected"
+                                ? "orange"
+                                : "green",
+                          }}
+                        >
+                          {
                             item.participants.filter(
                               (item) => item.participant === loggedUser.user._id
-                            )[0].status === "pending"
-                              ? "red"
-                              : item.participants.filter(
-                                  (item) =>
-                                    item.participant === loggedUser.user._id
-                                )[0].status === "rejected"
-                              ? "orange"
-                              : "green",
+                            )[0].status
+                          }
+                        </span>
+                      </Typography>
+                    ) : null}
+                  </CardContent>
+                  <CardActions>
+                    {item.createdBy !== loggedUser.user._id &&
+                    item.status !== "canceled" ? (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        style={{
+                          textTransform: "none",
+                          fontSize: "18px",
+                          marginBottom: "10px",
                         }}
-                      >
-                        {
+                        disabled={
+                          item.participants.length > 0 &&
                           item.participants.filter(
                             (item) => item.participant === loggedUser.user._id
-                          )[0].status
+                          ).length > 0
+                            ? true
+                            : false
                         }
-                      </span>
-                    </Typography>
-                  ) : null}
-                </CardContent>
-                <CardActions>
-                  {item.createdBy !== loggedUser.user._id &&
-                  item.status !== "canceled" ? (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      fullWidth
-                      style={{
-                        textTransform: "none",
-                        fontSize: "18px",
-                        marginBottom: "10px",
-                      }}
-                      disabled={
-                        item.participants.length > 0 &&
-                        item.participants.filter(
-                          (item) => item.participant === loggedUser.user._id
-                        ).length > 0
-                          ? true
-                          : false
-                      }
-                      onClick={() =>
-                        register(
-                          item.createdBy,
-                          item.title,
-                          item._id,
-                          item.description
-                        )
-                      }
-                    >
-                      Registration Request
-                    </Button>
-                  ) : item.status !== "canceled" ? (
-                    <>
-                      <Button
-                        variant="contained"
-                        color="info"
-                        fullWidth
-                        style={{
-                          textTransform: "none",
-                          fontSize: "18px",
-                          marginBottom: "10px",
-                        }}
-                        disabled={
-                          new Date(item.date) < Date.now() ? true : false
+                        onClick={() =>
+                          register(
+                            item.createdBy,
+                            item.title,
+                            item._id,
+                            item.description
+                          )
                         }
-                        onClick={() => editEvent(item._id)}
                       >
-                        Edit
+                        Registration Request
                       </Button>
+                    ) : item.status !== "canceled" ? (
+                      <>
+                        <Button
+                          variant="contained"
+                          color="info"
+                          fullWidth
+                          style={{
+                            textTransform: "none",
+                            fontSize: "18px",
+                            marginBottom: "10px",
+                          }}
+                          onClick={() => editEvent(item._id)}
+                        >
+                          Edit
+                        </Button>
 
-                      <Button
-                        variant="contained"
-                        color="warning"
-                        fullWidth
-                        onClick={() => cancel(item._id)}
-                        style={{
-                          textTransform: "none",
-                          fontSize: "18px",
-                          marginBottom: "10px",
-                        }}
-                        disabled={
-                          new Date(item.date) < Date.now() ? true : false
-                        }
-                      >
-                        Remove
-                      </Button>
-                    </>
-                  ) : (
-                    <Typography variant="h5" color="red">
-                      Event canceled
-                    </Typography>
-                  )}
-                </CardActions>
-              </Grid>
-            );
-          })
+                        <Button
+                          variant="contained"
+                          color="warning"
+                          fullWidth
+                          onClick={() => cancel(item._id)}
+                          style={{
+                            textTransform: "none",
+                            fontSize: "18px",
+                            marginBottom: "10px",
+                          }}
+                        >
+                          Remove
+                        </Button>
+                      </>
+                    ) : (
+                      <Typography variant="h5" color="red">
+                        Event canceled
+                      </Typography>
+                    )}
+                  </CardActions>
+                </Grid>
+              );
+            })
         : null}
     </Grid>
   );

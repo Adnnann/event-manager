@@ -37,13 +37,7 @@ const reLoginUser = async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        role: user.role,
-        userImage: user.userImage,
-        enrolledInCourses: user.enrolledInCourses,
-        completedCourses: user.completedCourses,
       },
-      courseNum: user.role !== "student" ? courseNum.length : null,
-      relogin: true,
     });
   });
 };
@@ -67,10 +61,6 @@ const read = (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        role: user.role,
-        userImage: user.userImage,
-        enrolledInCourses: user.enrolledInCourses,
-        completedCourses: user.completedCourses,
       },
       message: "User found!",
     });
@@ -128,91 +118,12 @@ const updateUserPassword = async (req, res, next) => {
   });
 };
 
-const enrollInCourse = async (req, res) => {
-  const user = await User.findByIdAndUpdate(
-    { _id: req.body.id },
-    { $push: { enrolledInCourses: req.body.courseId } }
-  );
-  if (user) {
-    res.send({ message: "User enrolled" });
-  } else {
-    res.send({ error: errorHandler.getErrorMessage(err) });
-  }
-};
-
-const courseCompleted = async (req, res) => {
-  const user = await User.findByIdAndUpdate(
-    { _id: req.body.id },
-    { $push: { completedCourses: req.body.courseId } }
-  );
-  if (user) {
-    res.send({ message: "Course completed" });
-  } else {
-    res.send({ error: errorHandler.getErrorMessage(err) });
-  }
-};
-
-const getUserCourses = (req, res) => {
-  Course.find({}, (err, course) => {
-    const userCourses = [];
-
-    if (err) {
-      return res.send({ error: errorHandler.getErrorMessage(err) });
-    }
-    course.map((item, index) => {
-      if (req.body.completedCourses.length !== 0) {
-        if (
-          req.body.userCourses.includes(item._id.toString()) &&
-          !req.body.completedCourses.includes(item._id)
-        ) {
-          userCourses.push(item);
-        }
-      } else {
-        if (req.body.userCourses.includes(item._id.toString())) {
-          userCourses.push(item);
-        }
-      }
-    });
-
-    return res.send({
-      data: req.body.filterTerm
-        ? userCourses.filter((course) =>
-            course.title
-              .toLowerCase()
-              .includes(req.body.filterTerm.toLowerCase())
-          )
-        : userCourses,
-    });
-  });
-};
-
-const getMentorCourses = (req, res) => {
-  Course.find({ mentorId: req.body.mentorId })
-    .where({ status: "active" })
-    .exec((err, course) => {
-      if (err) {
-        return res.send({ error: errorHandler.getErrorMessage(err) });
-      }
-      return res.send({
-        data: req.body.filterTerm
-          ? course
-              .filter((item) => item.title.includes(req.body.filterTerm))
-              .slice(req.body.firstItem, req.body.lastItem)
-          : course.slice(req.body.firstItem, req.body.lastItem),
-
-        totalNumOfCourses: req.body.filterTerm
-          ? course.filter((item) => item.title.includes(req.body.filterTerm))
-              .length
-          : course.length,
-      });
-    });
-};
-const getAllMentors = (req, res) => {
+const getAllUsers = (req, res) => {
   User.find({}).exec((err, user) => {
     if (err) {
       res.send({ err: "error" });
     } else {
-      res.send({ mentors: user });
+      res.send({ users: user });
     }
   });
 };
@@ -233,11 +144,7 @@ export default {
   update,
   remove,
   updateUserPassword,
-  enrollInCourse,
-  courseCompleted,
-  getUserCourses,
-  getAllMentors,
-  getMentorCourses,
+  getAllUsers,
   reLoginUser,
   userByID,
 };

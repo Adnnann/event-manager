@@ -9,6 +9,7 @@ import {
   cleanLoginMessage,
   fetchEvents,
   fetchUserEvents,
+  fetchAllUsers,
 } from "../../features/eventsSlice";
 import {
   Card,
@@ -90,6 +91,7 @@ const Login = ({ socket }) => {
       socket?.emit("newUser", user);
       dispatch(fetchEvents());
       dispatch(fetchUserEvents(loggedUser.user._id));
+      dispatch(fetchAllUsers());
       navigate("/dashboard");
     }
   }, [loggedUser, socket]);

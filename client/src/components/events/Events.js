@@ -89,6 +89,7 @@ const Events = ({ socket }) => {
     const event = {
       id: eventId,
       userId: loggedUser.user._id,
+      email: loggedUser.user.email,
       title: title,
       description: description,
     };
@@ -226,116 +227,138 @@ const Events = ({ socket }) => {
 
   return (
     <>
-      <Grid container spacing={1} marginTop={2} justifyContent="space-evenly">
-        <Grid item xs={12} md={12} lg={12} xl={12}>
-          {(filter === "myEvents" || filter === "allEvents") && (
-            <>
-              <h1 style={{ marginLeft: "5%", marginBottom: "0" }}>My events</h1>
-              <hr
-                style={{
-                  width: "95%",
-                  borderWidth: "1px",
-                  borderStyle: "solid",
-                }}
-              />
-            </>
-          )}
-        </Grid>
-
-        {Object.keys(events).length !== 0 &&
-        Object.keys(loggedUser).length !== 0 &&
-        (filter === "myEvents" || filter === "allEvents") ? (
-          <Event
-            events={events.events.filter(
-              (item) => item.createdBy === loggedUser.user._id
+      {loggedUser?.user ? (
+        <Grid container spacing={1} marginTop={2} justifyContent="space-evenly">
+          <Grid item xs={12} md={12} lg={12} xl={12}>
+            {(filter === "myEvents" || filter === "allEvents") && (
+              <>
+                <h1 style={{ marginLeft: "5%", marginBottom: "0" }}>
+                  My events
+                </h1>
+                <hr
+                  style={{
+                    width: "95%",
+                    borderWidth: "1px",
+                    borderStyle: "solid",
+                  }}
+                />
+              </>
             )}
-            userEvents={true}
-            register={register}
-            cancel={cancel}
-          />
-        ) : null}
+          </Grid>
 
-        {Object.keys(events).length !== 0 &&
-        events.events.filter((item) => item.createdBy === loggedUser.user._id)
-          .length === 0 ? (
-          <h2 style={{ color: "limegreen" }}>You do not have any events yet</h2>
-        ) : null}
-
-        <Grid item xs={12} md={12} lg={12} xl={12}>
-          {(filter === "courses" || filter === "allEvents") && (
-            <>
-              <h1 style={{ marginLeft: "5%", marginBottom: "0" }}>Courses</h1>
-              <hr
-                style={{
-                  width: "95%",
-                  borderWidth: "1px",
-                  borderStyle: "solid",
-                }}
-              />
-            </>
-          )}
-        </Grid>
-        {Object.keys(events).length !== 0 &&
-        Object.keys(loggedUser).length !== 0 &&
-        (filter === "courses" || filter === "allEvents") ? (
-          <Event
-            events={_.chain(
-              events.events.filter(
-                (item) =>
-                  item.category === "courses" &&
-                  item.createdBy !== loggedUser.user._id
+          {Object.keys(events).length !== 0 &&
+          Object.keys(loggedUser).length !== 0 &&
+          (filter === "myEvents" || filter === "allEvents") ? (
+            <Event
+              events={_.chain(
+                events.events.filter(
+                  (item) => item.createdBy === loggedUser.user._id
+                )
               )
-            )
-              .orderBy(["participants"], ["desc"])
-              .value()}
-            register={register}
-          />
-        ) : null}
+                .orderBy(["dateOfCreation"], ["desc"])
+                .value()}
+              userEvents={true}
+              register={register}
+              cancel={cancel}
+            />
+          ) : null}
 
-        <Grid item xs={12} md={12} lg={12} xl={12}>
-          {(filter === "meetups" || filter === "allEvents") && (
-            <>
-              <h1 style={{ marginLeft: "5%", marginBottom: "0" }}>Meetups</h1>
-              <hr
-                style={{
-                  width: "95%",
-                  borderWidth: "1px",
-                  borderStyle: "solid",
-                }}
-              />
-            </>
-          )}
-        </Grid>
-        {Object.keys(events).length !== 0 &&
-        Object.keys(loggedUser).length !== 0 &&
-        (filter === "meetups" || filter === "allEvents") ? (
-          <Event
-            events={_.chain(
-              events.events.filter(
-                (item) =>
-                  item.category === "meetups" &&
-                  item.createdBy !== loggedUser.user._id
+          {Object.keys(events).length !== 0 &&
+          events.events.filter((item) => item.createdBy === loggedUser.user._id)
+            .length === 0 ? (
+            <h2 style={{ color: "limegreen" }}>
+              You do not have any events yet
+            </h2>
+          ) : null}
+
+          <Grid item xs={12} md={12} lg={12} xl={12}>
+            {(filter === "courses" || filter === "allEvents") && (
+              <>
+                <h1 style={{ marginLeft: "5%", marginBottom: "0" }}>Courses</h1>
+                <hr
+                  style={{
+                    width: "95%",
+                    borderWidth: "1px",
+                    borderStyle: "solid",
+                  }}
+                />
+              </>
+            )}
+          </Grid>
+          {Object.keys(events).length !== 0 &&
+          Object.keys(loggedUser).length !== 0 &&
+          (filter === "courses" || filter === "allEvents") ? (
+            <Event
+              events={_.chain(
+                events.events.filter(
+                  (item) =>
+                    item.category === "courses" &&
+                    item.createdBy !== loggedUser.user._id
+                )
               )
-            )
-              .orderBy(["participants"], ["desc"])
-              .value()}
-            register={register}
-          />
-        ) : null}
-      </Grid>
+                .orderBy(["participants"], ["desc"])
+                .value()}
+              register={register}
+            />
+          ) : null}
+
+          <Grid item xs={12} md={12} lg={12} xl={12}>
+            {(filter === "meetups" || filter === "allEvents") && (
+              <>
+                <h1 style={{ marginLeft: "5%", marginBottom: "0" }}>Meetups</h1>
+                <hr
+                  style={{
+                    width: "95%",
+                    borderWidth: "1px",
+                    borderStyle: "solid",
+                  }}
+                />
+              </>
+            )}
+          </Grid>
+          {Object.keys(events).length !== 0 &&
+          Object.keys(loggedUser).length !== 0 &&
+          (filter === "meetups" || filter === "allEvents") ? (
+            <Event
+              events={_.chain(
+                events.events.filter(
+                  (item) =>
+                    item.category === "meetups" &&
+                    item.createdBy !== loggedUser.user._id
+                )
+              )
+                .orderBy(["date", "participants"], ["desc"])
+                .value()}
+              register={register}
+            />
+          ) : null}
+        </Grid>
+      ) : null}
       {Object.keys(registrationNotification).length !== 0 ? (
         <Notifications
-          registrationArr={registrationNotification}
+          registrationArr={registrationNotification.filter(
+            (user) => user.senderId !== loggedUser.user._id
+          )}
           approve={approveRegistration}
           remove={removeNotification}
-          open={Object.keys(registrationNotification).length > 0 ? true : false}
+          open={
+            Object.keys(registrationNotification).length > 0 &&
+            registrationNotification.filter(
+              (item) => item.email !== loggedUser.user.email
+            ).length > 0
+              ? true
+              : false
+          }
           removeNotification={removeNotification}
           reject={rejectRegistration}
         />
       ) : null}
+
       {Object.keys(registrationResponse).length !== 0 ? (
         <Notifications
-          registrationArr={registrationResponse}
+          registrationArr={registrationResponse.filter(
+            (user) => user.senderId !== loggedUser.user._id
+          )}
           approve={approveRegistration}
           remove={removeNotification}
           open={

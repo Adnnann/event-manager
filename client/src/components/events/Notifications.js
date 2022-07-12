@@ -1,3 +1,4 @@
+import moment from "moment";
 import {
   Dialog,
   DialogTitle,
@@ -10,6 +11,8 @@ import {
 } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
+import { getEvents } from "../../features/eventsSlice";
 
 const Notifications = ({
   registrationArr,
@@ -19,8 +22,10 @@ const Notifications = ({
   removeNotification,
   removeResponse,
 }) => {
+  const events = useSelector(getEvents);
+
   return (
-    <Dialog open={open}>
+    <Dialog open={open} maxWidth={"xl"}>
       <DialogTitle>Event registration notifications</DialogTitle>
       {registrationArr.map((item, index) => {
         return (
@@ -45,18 +50,30 @@ const Notifications = ({
             </DialogActions>
             <DialogContent key={index}>
               <Typography variant="h5">{item.title}</Typography>
-              <DialogContentText>
-                {item.type === "registration response" ? (
-                  <>
-                    {" "}
-                    {`User ${item.email} `}{" "}
-                    <span style={{ fontWeight: "bold" }}>{item.response}</span>{" "}
-                    {` your registration request`}
-                  </>
-                ) : (
-                  `User ${item.email} would like to register for your event`
-                )}{" "}
-              </DialogContentText>
+
+              {item.type === "registration response" && (
+                <DialogContentText>
+                  {" "}
+                  {`User ${item.email} `}{" "}
+                  <span style={{ fontWeight: "bold" }}>{item.response}</span>{" "}
+                  {` your registration request `}
+                </DialogContentText>
+              )}
+              {item.type === "registration notification" && (
+                <DialogContentText>
+                  <span>{`Date: ${moment(
+                    events.events.filter(
+                      (event) => event.title === item.title
+                    )[0].date
+                  ).format("L")} `}</span>
+                  <span>{`Event price: ${
+                    events.events.filter(
+                      (event) => event.title === item.title
+                    )[0].price
+                  } `}</span>
+                  <span>{`User Email: ${item.email} `}</span>
+                </DialogContentText>
+              )}
             </DialogContent>
             <DialogActions
               style={{
@@ -66,7 +83,7 @@ const Notifications = ({
                 borderBottomColor: "black",
               }}
             >
-              {item.type === "registration notification" ? (
+              {item.type === "registration notification" && (
                 <>
                   <Button
                     autoFocus="autoFocus"
@@ -98,7 +115,8 @@ const Notifications = ({
                     Reject
                   </Button>
                 </>
-              ) : (
+              )}
+              {item.type === "registration response" && (
                 <Button
                   color="error"
                   variant="contained"

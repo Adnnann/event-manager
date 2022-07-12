@@ -10,7 +10,7 @@ router.get("/protected", (req, res) => {
   return res.send({ error: "User not signed" });
 });
 
-router.route("/api/users/").post(userCtrl.create);
+router.route("/api/users/").get(userCtrl.getAllUsers).post(userCtrl.create);
 
 router
   .route("/api/users/updateUserPassword/:userId")

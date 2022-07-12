@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import moment from "moment";
 import {
   clearRegistrationResponseStatus,
   fetchEvents,
   fetchUserEvents,
+  getAllUsers,
   getEvents,
   getLoggedUserData,
   getRegistrationResponseStatus,
@@ -51,6 +53,7 @@ const useStyles = makeStyles((theme) => ({
 const UserEvents = ({ socket }) => {
   const userEvents = useSelector(getUserEvents);
   const allEvents = useSelector(getEvents);
+  const allUsers = useSelector(getAllUsers);
 
   const registrationResponseStatus = useSelector(getRegistrationResponseStatus);
   const dispatch = useDispatch();
@@ -136,7 +139,7 @@ const UserEvents = ({ socket }) => {
 
   return (
     <Grid container spacing={1} marginTop={2} justifyContent="center">
-      {Object.keys(userEvents).length !== 0
+      {Object.keys(userEvents).length !== 0 && allUsers?.users
         ? userEvents.events
             .filter((item) => item.participants.length > 0)
             .map((item) => {
@@ -175,11 +178,17 @@ const UserEvents = ({ socket }) => {
                         variant="h5"
                         style={{ textAlign: "left", marginTop: "10px" }}
                       >
-                        {`Title: ${event.title}`}
+                        {`${event.title}`}
                       </Typography>
-                      <Typography
-                        component={"p"}
-                      >{`Description: ${event.description}`}</Typography>
+                      <Typography component={"p"}>{`Event date: ${moment(
+                        item.date
+                      ).format("L")}`}</Typography>
+                      <Typography component={"p"}>
+                        {`Event price: ${item.price}`}
+                      </Typography>
+                      <Typography component={"p"}>
+                        {`User Email: ${event.email}`}
+                      </Typography>
                       <Typography component={"p"}>
                         Status:{" "}
                         <span

@@ -5,6 +5,7 @@ import dbErrorHandlers from "./helpers/dbErrorHandlers.js";
 
 const createEvent = (req, res) => {
   const event = new Event(req.body);
+  event.dateOfCreation = Date.now();
   event.save((err) => {
     if (err) {
       return res.send({ error: dbErrorHandlers.getErrorMessage(err) });
@@ -64,6 +65,7 @@ const registerForEvent = (req, res) => {
       $push: {
         participants: {
           participant: req.body.participant,
+          email: req.body.email,
           status: "pending",
           title: req.body.title,
           description: req.body.description,

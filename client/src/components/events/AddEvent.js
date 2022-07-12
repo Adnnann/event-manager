@@ -12,7 +12,16 @@ import {
   getCreateEventMessage,
   getEvents,
 } from "../../features/eventsSlice";
-import { Button, Card, CardMedia, Grid } from "@mui/material";
+import {
+  Button,
+  ButtonGroup,
+  Card,
+  CardMedia,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  Grid,
+} from "@mui/material";
 import SelectComponent from "../utils/SelectComponent";
 import ImagePlaceholder from "../../assets/imagePlaceholder.png";
 import TextFieldsGenerator from "../utils/TextFieldsGenerator";
@@ -85,6 +94,7 @@ const AddEvent = ({ socket }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const allEvents = useSelector(getEvents);
+  const [open, setOpen] = useState(false);
 
   const addEventStatus = useSelector(getCreateEventMessage);
   const uploadImageStatus = useSelector(getUploadUserImageStatus);
@@ -99,7 +109,7 @@ const AddEvent = ({ socket }) => {
 
       socket.emit("createEvent");
 
-      navigate("/dashboard");
+      setOpen(true);
     }
   }, [addEventStatus, loggedUser]);
 
@@ -133,7 +143,33 @@ const AddEvent = ({ socket }) => {
   ];
   const multiline = [false, true, false, false];
 
+  let currencies = ["BAM", "EUR", "USD"];
+
   const clickSubmit = () => {
+    if (values.price.split(" ").length !== 2) {
+      setValues({
+        ...values,
+        error:
+          "Price can be a decimal value or number and has to be separated by space from currency (BAM, USD or EUR)",
+      });
+      return;
+    } else if (
+      values.price.split(" ")[0].match(/^\d{1,3}(,\d{3})*(\.\d+)?$/) &&
+      currencies.includes(values.price.split(" ")[1].toUpperCase())
+    ) {
+      setValues({
+        ...values,
+        error: "",
+      });
+    } else {
+      setValues({
+        ...values,
+        error:
+          "Price can be a decimal value or number and has to be separated by space from currency (BAM, USD or EUR)",
+      });
+      return;
+    }
+
     if (new Date(values.date) < Date.now()) {
       return setValues({
         ...values,
@@ -155,6 +191,10 @@ const AddEvent = ({ socket }) => {
         ? uploadImageStatus.imageUrl
         : "https://media-exp1.licdn.com/dms/image/C561BAQE-51J-8KkMZg/company-background_10000/0/1548357920228?e=2147483647&v=beta&t=wrOVYN8qrGon9jILrMQv78FsyOV4IMQxr_3UjYtUREI",
       ...values,
+      price:
+        values.price.split(" ")[0] +
+        " " +
+        values.price.split(" ")[1].toUpperCase(),
       date: new Date(values.date).toISOString(),
     };
 
@@ -182,87 +222,120 @@ const AddEvent = ({ socket }) => {
     dispatch(uploadImage(formData, { id: "test" }));
   };
 
+  const redirectToDashboard = () => {
+    setValues({
+      title: "",
+      description: "",
+      price: "",
+      date: "",
+      category: "",
+      error: "",
+    });
+    navigate("/dashboard");
+  };
+
+  const removeMessage = () => {
+    setValues({
+      title: "",
+      description: "",
+      price: "",
+      date: "",
+      category: "",
+      error: "",
+    });
+    setOpen(false);
+  };
+
   return (
-    <Card className={classes.card}>
-      <h2 className={classes.addEventTitle}>Create your Event</h2>
-      <p>Upload photo</p>
-      <CardMedia
-        onClick={uploadPhoto}
-        className={classes.userImagePlaceholder}
-        src={
-          uploadImageStatus?.message
-            ? uploadImageStatus.imageUrl
-            : ImagePlaceholder
-        }
-        component="img"
-      ></CardMedia>
+    <>
+      <Card className={classes.card}>
+        <h2 className={classes.addEventTitle}>Create your Event</h2>
+        <p>Upload photo</p>
+        <CardMedia
+          onClick={uploadPhoto}
+          className={classes.userImagePlaceholder}
+          src={
+            uploadImageStatus?.message
+              ? uploadImageStatus.imageUrl
+              : ImagePlaceholder
+          }
+          component="img"
+        ></CardMedia>
 
-      <input
-        type="file"
-        style={{ visibility: "hidden" }}
-        id="uploadImage"
-        onChange={handleUpload}
-      />
+        <input
+          type="file"
+          style={{ visibility: "hidden" }}
+          id="uploadImage"
+          onChange={handleUpload}
+        />
 
-      <Grid container justifyContent={"center"}>
-        <Grid item xs={12} md={6} lg={6} xl={6}>
-          <TextFieldsGenerator
-            array={textFields}
-            handleChange={handleChange}
-            values={values}
-            value={textFields}
-            labels={labels}
-            types={types}
-            placeholder={placeholder}
-            multiline={multiline}
-          />
+        <Grid container justifyContent={"center"}>
+          <Grid item xs={12} md={6} lg={6} xl={6}>
+            <TextFieldsGenerator
+              array={textFields}
+              handleChange={handleChange}
+              values={values}
+              value={textFields}
+              labels={labels}
+              types={types}
+              placeholder={placeholder}
+              multiline={multiline}
+            />
 
-          <SelectComponent
-            label={"Category"}
-            selectedValue={values.category}
-            array={categories}
-            handleChange={handleChange("category")}
-            className={classes.selectFields}
-          />
-          {addEventStatus?.error || values.error ? (
-            <p className={classes.error}>
-              {addEventStatus.error || values.error}
-            </p>
-          ) : null}
-          {uploadImageStatus?.error ? (
-            <p className={classes.error}>{uploadImageStatus.error}</p>
-          ) : null}
-          <Button
-            fullWidth
-            color="error"
-            variant="contained"
-            style={{
-              marginRight: "10px",
-              marginTop: "20px",
-              fontSize: "20px",
-              textTransform: "none",
-            }}
-            onClick={clickSubmit}
-          >
-            Create Event
-          </Button>
-          <Button
-            color="info"
-            variant="contained"
-            onClick={cancel}
-            fullWidth
-            style={{
-              marginRight: "10px",
-              marginTop: "20px",
-              fontSize: "20px",
-              textTransform: "none",
-            }}
-          >
-            Cancel
-          </Button>
+            <SelectComponent
+              label={"Category"}
+              selectedValue={values.category}
+              array={categories}
+              handleChange={handleChange("category")}
+              className={classes.selectFields}
+            />
+            {addEventStatus?.error || values.error ? (
+              <p className={classes.error}>
+                {addEventStatus.error || values.error}
+              </p>
+            ) : null}
+            {uploadImageStatus?.error ? (
+              <p className={classes.error}>{uploadImageStatus.error}</p>
+            ) : null}
+            <Button
+              fullWidth
+              color="error"
+              variant="contained"
+              style={{
+                marginRight: "10px",
+                marginTop: "20px",
+                fontSize: "20px",
+                textTransform: "none",
+              }}
+              onClick={clickSubmit}
+            >
+              Create Event
+            </Button>
+            <Button
+              color="info"
+              variant="contained"
+              onClick={cancel}
+              fullWidth
+              style={{
+                marginRight: "10px",
+                marginTop: "20px",
+                fontSize: "20px",
+                textTransform: "none",
+              }}
+            >
+              Cancel
+            </Button>
+          </Grid>
         </Grid>
-      </Grid>
-    </Card>
+      </Card>
+      <Dialog open={open}>
+        <DialogTitle>Event added successfully</DialogTitle>
+        <DialogActions>
+          <Button onClick={() => removeMessage()}>Return</Button>
+          <Button onClick={() => redirectToDashboard()}>Go to dashboard</Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 

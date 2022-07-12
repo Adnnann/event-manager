@@ -14,8 +14,7 @@ const EventsSchema = new mongoose.Schema({
   },
   price: {
     type: String,
-    required: "Course level is required!",
-    match: [/^[0-9]*$/, "Price must be a number"],
+    required: "Price is required!",
   },
   date: {
     type: Date,
@@ -38,6 +37,9 @@ const EventsSchema = new mongoose.Schema({
   },
   participants: {
     type: Array,
+  },
+  dateOfCreation: {
+    type: Date,
   },
   updated: Date,
 });

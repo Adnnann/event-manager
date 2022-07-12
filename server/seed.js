@@ -4,6 +4,7 @@ import _ from "lodash";
 import Users from "./src/models/user.model.js";
 import Events from "./src/models/events.model.js";
 import config from "./src/config/config.js";
+import moment from "moment";
 
 const courses = [];
 const usersId = [];
@@ -75,10 +76,11 @@ const createEvents = async () => {
         "https://media-exp1.licdn.com/dms/image/C561BAQE-51J-8KkMZg/company-background_10000/0/1548357920228?e=2147483647&v=beta&t=wrOVYN8qrGon9jILrMQv78FsyOV4IMQxr_3UjYtUREI",
       description: `Event ${i} description`,
       category: categories[Math.floor(Math.random() * categories.length)],
-      date: new Date(),
-      price: Math.floor(Math.random() * 100),
+      date: moment(new Date()).add(i, "minute").toDate(),
+      price: `${Math.floor(Math.random() * 100)}.${i} BAM`,
       createdBy: user[Math.floor(Math.random() * user.length)]._id,
       participants: [],
+      dateOfCreation: Date.now(),
     });
   }
   await Events.insertMany(events);

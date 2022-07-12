@@ -170,8 +170,33 @@ const EditEvent = ({ socket }) => {
     "Event Price 0.00 BAM",
   ];
   const multiline = [false, true, false, false];
+  let currencies = ["BAM", "EUR", "USD"];
 
   const clickSubmit = () => {
+    if (values.price.split(" ").length !== 2) {
+      setValues({
+        ...values,
+        error:
+          "Price can be a decimal value or number and has to be separated by space from currency (BAM, USD or EUR)",
+      });
+      return;
+    } else if (
+      values.price.split(" ")[0].match(/^\d{1,3}(,\d{3})*(\.\d+)?$/) &&
+      currencies.includes(values.price.split(" ")[1].toUpperCase())
+    ) {
+      setValues({
+        ...values,
+        error: "",
+      });
+    } else {
+      setValues({
+        ...values,
+        error:
+          "Price can be a decimal value or number and has to be separated by space from currency (BAM, USD or EUR)",
+      });
+      return;
+    }
+
     if (new Date(values.date) < Date.now()) {
       return setValues({
         ...values,
@@ -193,7 +218,10 @@ const EditEvent = ({ socket }) => {
       data: {
         title: values.title,
         description: values.description,
-        price: values.price,
+        price:
+          values.price.split(" ")[0] +
+          " " +
+          values.price.split(" ")[1].toUpperCase(),
         date: values.date,
         category: values.category,
         eventImage: uploadImageStatus?.imageUrl
@@ -204,7 +232,7 @@ const EditEvent = ({ socket }) => {
 
     dispatch(updateEvent(event));
   };
-  console.log();
+
   const cancel = () => {
     dispatch(cleanUploadImageStatus());
     navigate("/dashboard");

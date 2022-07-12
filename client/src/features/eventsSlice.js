@@ -36,6 +36,11 @@ export const signoutUser = createAsyncThunk("users/user", async () => {
   return response.data;
 });
 
+export const fetchAllUsers = createAsyncThunk("events/allUsers", async () => {
+  const response = await axios.get("api/users/");
+  return response.data;
+});
+
 export const isSignedUser = createAsyncThunk("events/isSigned", async () => {
   return await axios
     .get("/protected", {
@@ -106,6 +111,7 @@ export const registerForEvent = createAsyncThunk(
     return await axios
       .post(`/api/eventRegistration/`, {
         participant: event.userId,
+        email: event.email,
         eventId: event.id,
         title: event.title,
         description: event.description,
@@ -171,6 +177,7 @@ const initialState = {
   eventToEdit: {},
   canceledEvent: {},
   updateEvent: {},
+  users: {},
 };
 
 const eventsSlice = createSlice({
@@ -275,6 +282,9 @@ const eventsSlice = createSlice({
     [fetchUserData.fulfilled]: (state, { payload }) => {
       return { ...state, loggedUser: payload };
     },
+    [fetchAllUsers.fulfilled]: (state, { payload }) => {
+      return { ...state, users: payload };
+    },
   },
 });
 
@@ -297,6 +307,7 @@ export const getRegistrationResponseStatus = (state) =>
 export const getEventToEdit = (state) => state.events.eventToEdit;
 export const getCanceledEvent = (state) => state.events.canceledEvent;
 export const getUpdateEventStatus = (state) => state.events.updateEvent;
+export const getAllUsers = (state) => state.events.users;
 
 export const {
   setSigninUserForm,
