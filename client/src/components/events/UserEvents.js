@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import {
@@ -58,6 +58,7 @@ const UserEvents = ({ socket }) => {
   const registrationResponseStatus = useSelector(getRegistrationResponseStatus);
   const dispatch = useDispatch();
   const classes = useStyles();
+  const [date, setDate] = useState(new Date());
 
   const loggedUser = useSelector(getLoggedUserData);
 
@@ -68,6 +69,16 @@ const UserEvents = ({ socket }) => {
       dispatch(clearRegistrationResponseStatus());
     }
   }, [registrationResponseStatus]);
+
+  useEffect(() => {
+    let countDown = setInterval(() => {
+      setDate(new Date());
+    }, 1000);
+
+    return function cleanup() {
+      clearInterval(countDown);
+    };
+  });
 
   const approveRegistration = (eventId, participantId, title) => {
     let participantsArr = [];
@@ -139,7 +150,7 @@ const UserEvents = ({ socket }) => {
 
   return (
     <Grid container spacing={1} marginTop={2} justifyContent="center">
-      {Object.keys(userEvents).length !== 0 && allUsers?.users
+      {userEvents?.events
         ? userEvents.events
             .filter((item) => item.participants.length > 0)
             .map((item) => {
@@ -182,7 +193,7 @@ const UserEvents = ({ socket }) => {
                       </Typography>
                       <Typography component={"p"}>{`Event date: ${moment(
                         item.date
-                      ).format("L")}`}</Typography>
+                      ).format("L hh:mm")}`}</Typography>
                       <Typography component={"p"}>
                         {`Event price: ${item.price}`}
                       </Typography>
@@ -206,51 +217,60 @@ const UserEvents = ({ socket }) => {
                       </Typography>
                     </CardContent>
                     <CardActions>
-                      {event.status === "pending" && (
-                        <>
-                          <Button
-                            autoFocus="autoFocus"
-                            variant="contained"
-                            fullWidth
-                            style={{
-                              marginLeft: "0",
-                              borderTopRightRadius: "0",
-                              backgroundColor: "grey",
-                              borderRadius: "0",
-                            }}
-                            onClick={() => {
-                              approveRegistration(
-                                item._id,
-                                event.participant,
-                                item.title
-                              );
-                            }}
-                          >
-                            Approve
-                          </Button>
-                          <Button
-                            color="error"
-                            variant="contained"
-                            autoFocus="autoFocus"
-                            fullWidth
-                            style={{
-                              marginLeft: "0",
-                              borderTopLeftRadius: "0",
-                              borderTopBottomRadius: "0",
-                              borderRadius: "0",
-                            }}
-                            onClick={() =>
-                              rejectRegistration(
-                                item._id,
-                                event.participant,
-                                item.title
-                              )
-                            }
-                          >
-                            Reject
-                          </Button>
-                        </>
+                      {new Date(item.date) < date && (
+                        <Typography
+                          variant="h4"
+                          style={{ color: "red", margin: "0 auto" }}
+                        >
+                          Event ended
+                        </Typography>
                       )}
+                      {event.status === "pending" &&
+                        new Date(item.date) > date && (
+                          <>
+                            <Button
+                              autoFocus="autoFocus"
+                              variant="contained"
+                              fullWidth
+                              style={{
+                                marginLeft: "0",
+                                borderTopRightRadius: "0",
+                                backgroundColor: "grey",
+                                borderRadius: "0",
+                              }}
+                              onClick={() => {
+                                approveRegistration(
+                                  item._id,
+                                  event.participant,
+                                  item.title
+                                );
+                              }}
+                            >
+                              Approve
+                            </Button>
+                            <Button
+                              color="error"
+                              variant="contained"
+                              autoFocus="autoFocus"
+                              fullWidth
+                              style={{
+                                marginLeft: "0",
+                                borderTopLeftRadius: "0",
+                                borderTopBottomRadius: "0",
+                                borderRadius: "0",
+                              }}
+                              onClick={() =>
+                                rejectRegistration(
+                                  item._id,
+                                  event.participant,
+                                  item.title
+                                )
+                              }
+                            >
+                              Reject
+                            </Button>
+                          </>
+                        )}
                     </CardActions>
                   </Grid>
                 );

@@ -43,6 +43,18 @@ const Event = ({ events, register, userEvents, cancel }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const [date, setDate] = useState(new Date());
+
+  useEffect(() => {
+    let countDown = setInterval(() => {
+      setDate(new Date());
+    }, 1000);
+
+    return function cleanup() {
+      clearInterval(countDown);
+    };
+  });
+
   const editEvent = (id) => {
     dispatch(setEventToEdit(...events.filter((item) => item._id === id)));
     navigate("/editEvent");
@@ -51,118 +63,125 @@ const Event = ({ events, register, userEvents, cancel }) => {
   return (
     <Grid container spacing={1} marginTop={2} justifyContent="space-evenly">
       {Object.keys(events).length !== 0
-        ? events
-            .filter((item) => new Date(item.date) > Date.now())
-            .map((item) => {
-              return (
-                <Grid
-                  key={item._id}
-                  item
-                  xs={12}
-                  md={3}
-                  lg={2}
-                  xl={2}
-                  style={{
-                    borderColor: "black",
-                    borderStyle: "solid",
-                    borderWidth: "1px",
-                    marginRight: "5px",
-                    paddingRight: "15px",
-                    marginBottom: "10px",
-                  }}
-                >
-                  <Card>
-                    <CardMedia
-                      className={classes.image}
-                      component={"img"}
-                      src={item.eventImage}
-                    ></CardMedia>
-                  </Card>
+        ? events.map((item) => {
+            return (
+              <Grid
+                key={item._id}
+                item
+                xs={12}
+                md={3}
+                lg={2}
+                xl={2}
+                style={{
+                  borderColor: "black",
+                  borderStyle: "solid",
+                  borderWidth: "1px",
+                  marginRight: "5px",
+                  paddingRight: "15px",
+                  marginBottom: "10px",
+                }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.image}
+                    component={"img"}
+                    src={item.eventImage}
+                  ></CardMedia>
+                </Card>
 
-                  <CardContent style={{ textAlign: "left" }}>
-                    <Typography
-                      variant="h5"
-                      style={{
-                        textAlign: "left",
-                        marginTop: "10px",
-                        textDecoration:
-                          item.status === "canceled" ? "line-through" : "none",
-                        color: item.status === "canceled" ? "red" : "black",
-                      }}
-                    >
-                      {item.title}
+                <CardContent style={{ textAlign: "left" }}>
+                  <Typography
+                    variant="h5"
+                    style={{
+                      textAlign: "left",
+                      marginTop: "10px",
+                      textDecoration:
+                        item.status === "canceled" ? "line-through" : "none",
+                      color: item.status === "canceled" ? "red" : "black",
+                    }}
+                  >
+                    {item.title}
+                  </Typography>
+                  <Typography component={"p"}>
+                    Date: {moment(item.data).format("L")}
+                  </Typography>
+                  <Typography component={"p"}>
+                    Event price: {item.price}
+                  </Typography>
+                  <Typography component={"p"}>
+                    Date: {moment(item.date).format("L")}{" "}
+                    {moment(item.date).format("HH:mm")}
+                  </Typography>
+                  <Typography
+                    component={"p"}
+                    style={{ wordBreak: "break-all" }}
+                  >
+                    Event description: {item.description}
+                  </Typography>
+                  {item?.updated && (
+                    <Typography component={"p"} color="green">
+                      {`Event updated at ${moment(item.updated).format(
+                        "L HH:MM"
+                      )}`}
                     </Typography>
-                    <Typography component={"p"}>
-                      Date: {moment(item.data).format("L")}
+                  )}
+
+                  {item.createdBy === loggedUser.user._id ? (
+                    <Typography component={"p"} fontStyle="italic">
+                      {`Participants: ${
+                        item.participants.filter(
+                          (item) => item.status === "approved"
+                        ).length
+                      }`}
                     </Typography>
-                    <Typography component={"p"}>
-                      Event price: {item.price}
-                    </Typography>
-                    <Typography component={"p"}>
-                      Date: {moment(item.date).format("L")}{" "}
-                      {moment(item.date).format("HH:mm")}
-                    </Typography>
+                  ) : null}
+
+                  {item.participants.length > 0 &&
+                  item.participants.filter(
+                    (item) => item.participant === loggedUser.user._id
+                  ).length > 0 ? (
                     <Typography
                       component={"p"}
                       style={{ wordBreak: "break-all" }}
                     >
-                      Event description: {item.description}
-                    </Typography>
-                    {item?.updated && (
-                      <Typography component={"p"} color="green">
-                        {`Event updated at ${moment(item.updated).format(
-                          "L HH:MM"
-                        )}`}
-                      </Typography>
-                    )}
-
-                    {item.createdBy === loggedUser.user._id ? (
-                      <Typography component={"p"} fontStyle="italic">
-                        {`Participants: ${
-                          item.participants.filter(
-                            (item) => item.status === "approved"
-                          ).length
-                        }`}
-                      </Typography>
-                    ) : null}
-
-                    {item.participants.length > 0 &&
-                    item.participants.filter(
-                      (item) => item.participant === loggedUser.user._id
-                    ).length > 0 ? (
-                      <Typography
-                        component={"p"}
-                        style={{ wordBreak: "break-all" }}
-                      >
-                        Reservation status:
-                        <span
-                          style={{
-                            color:
-                              item.participants.filter(
-                                (item) =>
-                                  item.participant === loggedUser.user._id
-                              )[0].status === "pending"
-                                ? "red"
-                                : item.participants.filter(
-                                    (item) =>
-                                      item.participant === loggedUser.user._id
-                                  )[0].status === "rejected"
-                                ? "orange"
-                                : "green",
-                          }}
-                        >
-                          {
+                      Reservation status:
+                      <span
+                        style={{
+                          color:
                             item.participants.filter(
                               (item) => item.participant === loggedUser.user._id
-                            )[0].status
-                          }
-                        </span>
-                      </Typography>
-                    ) : null}
-                  </CardContent>
-                  <CardActions>
-                    {item.createdBy !== loggedUser.user._id &&
-                    item.status !== "canceled" ? (
+                            )[0].status === "pending"
+                              ? "red"
+                              : item.participants.filter(
+                                  (item) =>
+                                    item.participant === loggedUser.user._id
+                                )[0].status === "rejected"
+                              ? "orange"
+                              : "green",
+                        }}
+                      >
+                        {
+                          item.participants.filter(
+                            (item) => item.participant === loggedUser.user._id
+                          )[0].status
+                        }
+                      </span>
+                    </Typography>
+                  ) : null}
+                </CardContent>
+                <CardActions>
+                  {new Date(item.date) < date && (
+                    <Typography
+                      variant="h4"
+                      color="red"
+                      style={{ margin: "0 auto" }}
+                    >
+                      Event ended
+                    </Typography>
+                  )}
+                  {item.createdBy !== loggedUser.user._id &&
+                    item.status !== "canceled" &&
+                    new Date(item.date) > date && (
                       <Button
                         variant="contained"
                         color="primary"
@@ -191,7 +210,11 @@ const Event = ({ events, register, userEvents, cancel }) => {
                       >
                         Registration Request
                       </Button>
-                    ) : item.status !== "canceled" ? (
+                    )}
+
+                  {item.status !== "canceled" &&
+                    new Date(item.date) > date &&
+                    item.createdBy === loggedUser.user._id && (
                       <>
                         <Button
                           variant="contained"
@@ -221,15 +244,16 @@ const Event = ({ events, register, userEvents, cancel }) => {
                           Remove
                         </Button>
                       </>
-                    ) : (
-                      <Typography variant="h5" color="red">
-                        Event canceled
-                      </Typography>
                     )}
-                  </CardActions>
-                </Grid>
-              );
-            })
+                  {item.status === "canceled" && (
+                    <Typography variant="h5" color="red">
+                      Event canceled
+                    </Typography>
+                  )}
+                </CardActions>
+              </Grid>
+            );
+          })
         : null}
     </Grid>
   );

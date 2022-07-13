@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { getEvents } from "../../features/eventsSlice";
+import { useEffect, useState } from "react";
 
 const Notifications = ({
   registrationArr,
@@ -23,6 +24,16 @@ const Notifications = ({
   removeResponse,
 }) => {
   const events = useSelector(getEvents);
+  const [date, setDate] = useState(new Date());
+  useEffect(() => {
+    let countDown = setInterval(() => {
+      setDate(new Date());
+    }, 1000);
+
+    return function cleanup() {
+      clearInterval(countDown);
+    };
+  });
 
   return (
     <Dialog open={open} maxWidth={"xl"}>
@@ -75,35 +86,58 @@ const Notifications = ({
                 </DialogContentText>
               )}
             </DialogContent>
-            <DialogActions
-              style={{
-                justifyContent: "space-around",
-                borderBottomStyle: "solid",
-                borderBottomWidth: "1px",
-                borderBottomColor: "black",
-              }}
-            >
-              {item.type === "registration notification" && (
-                <>
-                  <Button
-                    autoFocus="autoFocus"
-                    variant="contained"
-                    onClick={() => approve(item.email, item.title, item.id)}
-                    fullWidth
-                    style={{
-                      marginLeft: "0",
-                      borderTopRightRadius: "0",
-                      backgroundColor: "grey",
-                      borderRadius: "0",
-                    }}
-                  >
-                    Approve
-                  </Button>
+            {new Date(
+              events.events.filter(
+                (event) => event.title === item.title
+              )[0].date
+            ) > date ? (
+              <DialogActions
+                style={{
+                  justifyContent: "space-around",
+                  borderBottomStyle: "solid",
+                  borderBottomWidth: "1px",
+                  borderBottomColor: "black",
+                }}
+              >
+                {item.type === "registration notification" && (
+                  <>
+                    <Button
+                      autoFocus="autoFocus"
+                      variant="contained"
+                      onClick={() => approve(item.email, item.title, item.id)}
+                      fullWidth
+                      style={{
+                        marginLeft: "0",
+                        borderTopRightRadius: "0",
+                        backgroundColor: "grey",
+                        borderRadius: "0",
+                      }}
+                    >
+                      Approve
+                    </Button>
+                    <Button
+                      color="error"
+                      variant="contained"
+                      autoFocus="autoFocus"
+                      onClick={() => reject(item.email, item.title, item.id)}
+                      fullWidth
+                      style={{
+                        marginLeft: "0",
+                        borderTopLeftRadius: "0",
+                        borderTopBottomRadius: "0",
+                        borderRadius: "0",
+                      }}
+                    >
+                      Reject
+                    </Button>
+                  </>
+                )}
+                {item.type === "registration response" && (
                   <Button
                     color="error"
                     variant="contained"
                     autoFocus="autoFocus"
-                    onClick={() => reject(item.email, item.title, item.id)}
+                    onClick={() => removeResponse(item.title, item.email)}
                     fullWidth
                     style={{
                       marginLeft: "0",
@@ -112,28 +146,18 @@ const Notifications = ({
                       borderRadius: "0",
                     }}
                   >
-                    Reject
+                    Close notification
                   </Button>
-                </>
-              )}
-              {item.type === "registration response" && (
-                <Button
-                  color="error"
-                  variant="contained"
-                  autoFocus="autoFocus"
-                  onClick={() => removeResponse(item.title, item.email)}
-                  fullWidth
-                  style={{
-                    marginLeft: "0",
-                    borderTopLeftRadius: "0",
-                    borderTopBottomRadius: "0",
-                    borderRadius: "0",
-                  }}
-                >
-                  Close notification
-                </Button>
-              )}
-            </DialogActions>
+                )}
+              </DialogActions>
+            ) : (
+              <Typography
+                variant="h5"
+                style={{ color: "red", textAlign: "center" }}
+              >
+                Event ended
+              </Typography>
+            )}
           </Card>
         );
       })}

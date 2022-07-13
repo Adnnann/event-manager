@@ -69,7 +69,7 @@ const categories = ["courses", "meetups"];
 const createEvents = async () => {
   await Users.insertMany(users);
   const user = await Users.where({}).exec();
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 10; i++) {
     events.push({
       title: `Event ${i}`,
       eventImage:

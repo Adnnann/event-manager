@@ -296,7 +296,7 @@ const Events = ({ socket }) => {
                     item.createdBy !== loggedUser.user._id
                 )
               )
-                .orderBy(["participants"], ["desc"])
+                .orderBy(["participants", "dateOfCreation"], ["desc"])
                 .value()}
               register={register}
             />
@@ -327,7 +327,7 @@ const Events = ({ socket }) => {
                     item.createdBy !== loggedUser.user._id
                 )
               )
-                .orderBy(["date", "participants"], ["desc"])
+                .orderBy(["participants", "dateOfCreation"], ["desc"])
                 .value()}
               register={register}
             />
